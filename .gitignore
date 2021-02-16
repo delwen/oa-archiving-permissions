@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# data folder
+data/
+
+# configuration file
+config.ini
+
+# python project-specific settings
+.idea/
+venv/*
+
