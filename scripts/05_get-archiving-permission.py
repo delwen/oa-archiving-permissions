@@ -174,7 +174,7 @@ merged_result = small.merge(df, on='doi', how='left', indicator=True)
 merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissions.csv")), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
-unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved-dois.csv")), index=False)no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
 no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
+unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved.csv")), index=False)
 no_auth_perm.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-no-auth-perm.csv")), index=False)
 print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
