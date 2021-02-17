@@ -73,6 +73,7 @@ def call_api(url, doi):
 
     return call_api_server(url, doi)
 
+
 def get_parameters(output_formatted):
 
     # Skip DOIs which do not have an authoritative permission
@@ -161,6 +162,7 @@ for doi in dois:
         print(f"SKIPPED: {doi}")
         no_auth_perm_dois.append(doi)
         continue
+
     result.append((doi, ) + tmp)
 
 # Create a dataframe to store the results
@@ -175,6 +177,7 @@ merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissio
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
 no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
+
 unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved.csv")), index=False)
 no_auth_perm.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-no-auth-perm.csv")), index=False)
 print("Number of unresolved DOIs: ", len(unresolved_dois))
