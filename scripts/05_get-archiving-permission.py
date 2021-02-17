@@ -128,8 +128,8 @@ def get_parameters(output_formatted):
         embargo_na_or_elapsed = elapsed_embargo < today
 
     # Define a final permission that depends on several conditions being met
-    permission_postprint = True if (can_archive is True & postprint is True & embargo_na_or_elapsed is True &
-                                    inst_repository is True) else False
+    permission_postprint = True if (can_archive is True & (postprint or publisher_pdf) is True &
+                                    embargo_na_or_elapsed is True & inst_repository is True) else False
 
     return can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
            licenses_required, author_afil_requir, author_afil_role_requir, author_funding_requir,\
