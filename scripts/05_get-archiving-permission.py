@@ -45,7 +45,7 @@ requests_cache.install_cache('permissions_cache')
 # Set the rate limit to 1 call per 2 seconds
 @sleep_and_retry
 @limits(calls=1, period=2)
-def call_api(url, doi):
+def call_api_server(url, doi):
     now = time.ctime(int(time.time()))
     response = requests.get(url + doi)
     print("Time: {0} / Used Cache: {1}".format(now, response.from_cache))
@@ -54,6 +54,24 @@ def call_api(url, doi):
         raise Exception('API response: {}'.format(response.status_code))
     return response.json()
 
+
+def call_api(url, doi):
+    req = requests.Request('GET', url + doi)
+
+    cache = requests_cache.get_cache()
+
+    prepped = requests.Session().prepare_request(req)
+    cache_key = cache.create_key(prepped)
+
+    try:
+        response, _ = cache.get_response_and_time(cache_key)
+    except (ImportError, TypeError):
+        response = None
+
+    if response:
+        return response.json()
+
+    return call_api_server(url, doi)
 
 def get_parameters(output_formatted):
     # Get the queried DOI
