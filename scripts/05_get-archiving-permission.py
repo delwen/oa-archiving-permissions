@@ -170,7 +170,7 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permissions_issuer', 'elapsed_embargo', 'embargo_na_or_elapsed',
                                    'permission_postprint'])
 
-merged_result = small.merge(df, on='doi', how='left', indicator=True)
+merged_result = closed.merge(df, on='doi', how='left', indicator=True)
 merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissions.csv")), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
