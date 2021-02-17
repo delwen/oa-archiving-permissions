@@ -152,7 +152,7 @@ for doi in dois:
     try:
         output = call_api(url, doi)
     except Exception as e:
-        print("Exception raised with DOI:", doi)
+        print("Exception raised with DOI:", doi, e)
         unresolved_dois.append(doi)
         continue
 
