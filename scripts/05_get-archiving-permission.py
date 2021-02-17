@@ -75,6 +75,9 @@ def call_api(url, doi):
 
 def get_parameters(output_formatted):
 
+    # Skip DOIs which do not have an authoritative permission
+    if not output_formatted["authoritative_permission"]:
+        return None
     # Can you self-archive the manuscript in any way?
     can_archive = output_formatted["authoritative_permission"]["application"]["can_archive"]
 
@@ -140,6 +143,7 @@ def jprint(obj):
 
 
 unresolved_dois = []
+no_auth_perm_dois = []
 result = []
 
 # make the API request
@@ -153,6 +157,10 @@ for doi in dois:
         continue
 
     tmp = get_parameters(output)
+    if not tmp:
+        print(f"SKIPPED: {doi}")
+        no_auth_perm_dois.append(doi)
+        continue
     result.append((doi, ) + tmp)
 
 # Create a dataframe to store the results
@@ -166,4 +174,7 @@ merged_result = small.merge(df, on='doi', how='left', indicator=True)
 merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissions.csv")), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
-unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved-dois.csv")), index=False)
+unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved-dois.csv")), index=False)no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
+no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
+no_auth_perm.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-no-auth-perm.csv")), index=False)
+print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
