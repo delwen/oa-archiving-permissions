@@ -74,8 +74,6 @@ def call_api(url, doi):
     return call_api_server(url, doi)
 
 def get_parameters(output_formatted):
-    # Get the queried DOI
-    queried_doi = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"]["doi"]
 
     # Can you self-archive the manuscript in any way?
     can_archive = output_formatted["authoritative_permission"]["application"]["can_archive"]
@@ -130,7 +128,7 @@ def get_parameters(output_formatted):
     permission_postprint = True if (can_archive is True & postprint is True & embargo_na_or_elapsed is True &
                                     inst_repository is True) else False
 
-    return queried_doi, can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
+    return can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
            licenses_required, author_afil_requir, author_afil_role_requir, author_funding_requir,\
            author_funding_prop_requir, permission_issuer, elapsed_embargo, embargo_na_or_elapsed, permission_postprint
 
@@ -155,7 +153,7 @@ for doi in dois:
         continue
 
     tmp = get_parameters(output)
-    result.append(tmp)
+    result.append((doi, ) + tmp)
 
 # Create a dataframe to store the results
 df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 'inst_repository', 'version', 'preprint',
