@@ -129,12 +129,15 @@ def get_parameters(output_formatted):
         embargo_na_or_elapsed = elapsed_embargo < today
 
     # Define a final permission that depends on several conditions being met
-    permission_postprint = True if (can_archive is True & (postprint or publisher_pdf) is True &
+    permission_postprint = True if (can_archive is True & postprint is True &
+                                    embargo_na_or_elapsed is True & inst_repository is True) else False
+    permission_publisher_pdf = True if (can_archive is True & publisher_pdf is True &
                                     embargo_na_or_elapsed is True & inst_repository is True) else False
 
     return can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
            licenses_required, author_afil_requir, author_afil_role_requir, author_funding_requir,\
-           author_funding_prop_requir, permission_issuer, elapsed_embargo, embargo_na_or_elapsed, permission_postprint
+           author_funding_prop_requir, permission_issuer, elapsed_embargo, embargo_na_or_elapsed, permission_postprint,\
+           permission_publisher_pdf
 
 
 def jprint(obj):
@@ -170,7 +173,7 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'postprint', 'publisher_pdf', 'licenses_required', 'author_afil_requir',
                                    'author_afil_role_requir', 'author_funding_requir', 'author_funding_prop_requir',
                                    'permissions_issuer', 'elapsed_embargo', 'embargo_na_or_elapsed',
-                                   'permission_postprint'])
+                                   'permission_postprint', 'permission_publisher_pdf'])
 
 merged_result = closed.merge(df, on='doi', how='left', indicator=True)
 merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissions.csv")), index=False)
