@@ -31,7 +31,7 @@ data_file = os.path.join(data_folder, "2021-02-16_berlin-2018-oa.csv")
 data = pd.read_csv(data_file)
 
 # Filter for UMC and closed articles
-closed = data[(data['color'] == 'closed')]
+closed = data[(data['color'] == 'closed') | (data['color'] == 'bronze')]
 print("Number of closed publications: ", closed.shape[0])
 
 # Base URL
