@@ -37,7 +37,7 @@ print("Number of closed publications: ", closed.shape[0])
 # Base URL
 url = "https://permissions.shareyourpaper.org/doi/"
 
-dois = closed['doi'].values.tolist()
+dois = set(closed['doi'].values.tolist())
 
 requests_cache.install_cache('permissions_cache')
 
