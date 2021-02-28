@@ -12,6 +12,8 @@ import configparser
 import datetime
 import os
 
+# Define file name
+filename = "2021-02-28_2021-01-26_pp-dataset-oa-trn-sciscore-od-animals"
 
 # Load paths from the config file
 cfg = configparser.ConfigParser()
@@ -25,7 +27,7 @@ now = today.strftime("%Y-%m-%d")
 data_folder = cfg["paths"]["data"]
 
 # Define path to file with the data
-data_file = os.path.join(data_folder, "2021-02-16_berlin-2018-oa.csv")
+data_file = os.path.join(data_folder, filename + ".csv")
 
 # Read input dataset containing DOIs and OA status
 data = pd.read_csv(data_file)
@@ -176,13 +178,13 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permission_postprint', 'permission_publisher_pdf'])
 
 merged_result = closed.merge(df, on='doi', how='left', indicator=True)
-merged_result.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-permissions.csv")), index=False)
+merged_result.to_csv(os.path.join(data_folder, now + filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
 no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
 
-unresolved.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-unresolved.csv")), index=False)
-no_auth_perm.to_csv(os.path.join(data_folder, (now + "_berlin-2018-oa-no-auth-perm.csv")), index=False)
+unresolved.to_csv(os.path.join(data_folder, now + filename + "-unresolved-permissions.csv"), index=False)
+no_auth_perm.to_csv(os.path.join(data_folder, now + filename + "-no-auth-permissions.csv"), index=False)
 
 print("Number of unresolved DOIs: ", len(unresolved_dois))
 print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
