@@ -118,15 +118,15 @@ def get_parameters(output_formatted):
     permission_issuer = output_formatted["authoritative_permission"]["issuer"]["permission_type"]
 
     # When does the embargo end?
-    elapsed_embargo = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
+    date_elapsed_embargo = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
         "postprint_embargo_end_calculated"]
 
     # If there is an embargo, convert it to date type and compare to query (current) date
-    if elapsed_embargo is None:
+    if date_elapsed_embargo is None:
         embargo_na_or_elapsed = True
     else:
-        elapsed_embargo = datetime.datetime.strptime(elapsed_embargo, '%Y-%m-%d')
-        embargo_na_or_elapsed = elapsed_embargo < today
+        date_elapsed_embargo = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d')
+        embargo_na_or_elapsed = date_elapsed_embargo < today
 
     # Define a final permission that depends on several conditions being met
     permission_postprint = True if (can_archive is True & postprint is True &
@@ -136,7 +136,7 @@ def get_parameters(output_formatted):
 
     return can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
            licenses_required, author_afil_requir, author_afil_role_requir, author_funding_requir,\
-           author_funding_prop_requir, permission_issuer, elapsed_embargo, embargo_na_or_elapsed, permission_postprint,\
+           author_funding_prop_requir, permission_issuer, date_elapsed_embargo, embargo_na_or_elapsed, permission_postprint,\
            permission_publisher_pdf
 
 
@@ -172,7 +172,7 @@ for doi in dois:
 df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 'inst_repository', 'version', 'preprint',
                                    'postprint', 'publisher_pdf', 'licenses_required', 'author_afil_requir',
                                    'author_afil_role_requir', 'author_funding_requir', 'author_funding_prop_requir',
-                                   'permissions_issuer', 'elapsed_embargo', 'embargo_na_or_elapsed',
+                                   'permissions_issuer', 'date_elapsed_embargo', 'embargo_na_or_elapsed',
                                    'permission_postprint', 'permission_publisher_pdf'])
 
 merged_result = closed.merge(df, on='doi', how='left', indicator=True)
