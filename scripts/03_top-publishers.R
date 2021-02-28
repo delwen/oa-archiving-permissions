@@ -7,9 +7,9 @@ source(here::here("scripts", "environment.R"))
 # Closed publishers
 #----------------------------------------------------------------------------------------------------------------------------------#
 
-filename <- "2021-02-16_berlin-2018-oa.csv"
+filename <- "2021-02-19_berlin-2018-oa"
 
-data <- read_csv(file.path(data_dir, filename), col_types = "ccdddcccccdccccdlllllcccccD")
+data <- read_csv(file.path(data_dir, paste0(filename, ".csv")), col_types = "ccdddcccccdccccdlllllcccccD")
 
 closed_data <- data %>%
   filter(color == "closed" | color == "bronze")
@@ -62,7 +62,7 @@ print(paste0("Number of closed publications: ", n_closed))
 
 # extract top 5 publishers for open publications
 
-data <- read_csv(file.path(data_dir, filename), col_types = "ccdddcccccdccccdlllllcccccD")
+data <- read_csv(file.path(data_dir, paste0(filename, ".csv")), col_types = "ccdddcccccdccccdlllllcccccD")
 open_data <- data %>%
   filter(color == "green" | color == "gold" | color == "hybrid")
 
