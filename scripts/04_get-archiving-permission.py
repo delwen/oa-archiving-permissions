@@ -30,9 +30,9 @@ data_file = os.path.join(data_folder, "2021-02-16_berlin-2018-oa.csv")
 # Read input dataset containing DOIs and OA status
 data = pd.read_csv(data_file)
 
-# Filter for UMC and closed articles
+# Filter for closed and bronze articles
 closed = data[(data['color'] == 'closed') | (data['color'] == 'bronze')]
-print("Number of closed publications: ", closed.shape[0])
+print("Number of closed and bronze publications: ", closed.shape[0])
 
 # Base URL
 url = "https://permissions.shareyourpaper.org/doi/"
