@@ -181,13 +181,13 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permission_postprint', 'permission_publisher_pdf'])
 
 merged_result = closed.merge(df, on='doi', how='left', indicator=True)
-merged_result.to_csv(os.path.join(data_folder, now + filename + "-permissions.csv"), index=False)
+merged_result.to_csv(os.path.join(data_folder, now + "_" + filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
 no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
 
-unresolved.to_csv(os.path.join(data_folder, now + filename + "-unresolved-permissions.csv"), index=False)
-no_auth_perm.to_csv(os.path.join(data_folder, now + filename + "-no-auth-permissions.csv"), index=False)
+unresolved.to_csv(os.path.join(data_folder, now + "_" + filename + "-unresolved-permissions.csv"), index=False)
+no_auth_perm.to_csv(os.path.join(data_folder, now + "_" + filename + "-no-auth-permissions.csv"), index=False)
 
 print("Number of unresolved DOIs: ", len(unresolved_dois))
 print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
