@@ -11,7 +11,10 @@ cran_pkgs <- c(
   "dplyr", "tidyr", "stringr", "readr", "here", "tibble",
   
   # Data visualization
-  "gridExtra", "ggvis", "ggplot2"
+  "gridExtra", "ggvis", "ggplot2",
+  
+  # Testing
+  "assertr"
 )
 
 
