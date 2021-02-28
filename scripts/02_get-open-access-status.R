@@ -18,8 +18,7 @@ output <- file.path(data_dir, paste0(Sys.Date(), "_", filename, "-oa.csv"))
 
 doi_table <- read_csv(input, col_types = "ccdddcccccdccccdlllllc")
 
-n_publications <- doi_table %>%
-  summarise(publications = n())
+n_publications <- nrow(doi_table)
 
 cities <- doi_table$city %>% unique()
 years <- doi_table$year_published %>% unique()
@@ -67,5 +66,8 @@ for(cty in cities)
 all_results <- left_join(doi_table, df, by = c("doi", "city", "year_published"))
 
 write_csv(all_results, output)
+
+test <- all_results %>%
+  verify(nrow(.)==n_publications)
 
 print(paste0("Number of publications: ", n_publications))
