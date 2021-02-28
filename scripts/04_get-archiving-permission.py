@@ -12,8 +12,11 @@ import configparser
 import datetime
 import os
 
+# Get date in input filename
+filename_date = "2021-02-28_"
+
 # Define file name
-filename = "2021-02-28_2021-01-26_pp-dataset-oa-trn-sciscore-od-animals"
+filename = "pp-dataset-oa-trn-sciscore-od-animals"
 
 # Load paths from the config file
 cfg = configparser.ConfigParser()
@@ -27,7 +30,7 @@ now = today.strftime("%Y-%m-%d")
 data_folder = cfg["paths"]["data"]
 
 # Define path to file with the data
-data_file = os.path.join(data_folder, filename + ".csv")
+data_file = os.path.join(data_folder, filename_date + filename + ".csv")
 
 # Read input dataset containing DOIs and OA status
 data = pd.read_csv(data_file)
