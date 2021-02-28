@@ -59,10 +59,12 @@ for(cty in cities)
   }
 }
 
-all_results <- merge(doi_table, df)
-all_results <- all_results %>%
-  distinct(city, year_published, doi, .keep_all = TRUE)
-all_results <- all_results[order(all_results$city),]
+# all_results <- merge(doi_table, df)
+# all_results <- all_results %>%
+#   distinct(city, year_published, doi, .keep_all = TRUE)
+# all_results <- all_results[order(all_results$city),]
+
+all_results <- left_join(doi_table, df, by = c("doi", "city", "year_published"))
 
 write_csv(all_results, output)
 
