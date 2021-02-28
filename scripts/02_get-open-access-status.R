@@ -47,7 +47,7 @@ for(cty in cities)
                                                     clusters = 2,
                                                     color_hierarchy = c("gold", "hybrid", "green", "bronze", "closed"))
     city_results <- tibble(city = cty,
-                           doi = unpaywall_results$doi,
+                           doi = doi_batch,
                            color = unpaywall_results$OA_color,
                            year_published = as.numeric(yr),
                            issn = unpaywall_results$issn,
