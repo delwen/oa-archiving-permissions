@@ -180,7 +180,7 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permissions_issuer', 'date_elapsed_embargo', 'embargo_na_or_elapsed',
                                    'permission_postprint', 'permission_publisher_pdf'])
 
-merged_result = data.merge(df, on='doi', how='left', indicator=True)
+merged_result = data.merge(df, on='doi', how='left')
 merged_result.to_csv(os.path.join(data_folder, now + "_" + filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
