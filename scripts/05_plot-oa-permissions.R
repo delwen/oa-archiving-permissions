@@ -1,52 +1,36 @@
 source(here::here("scripts", "environment.R"))
 
-filename <- "2021-02-18_berlin-2018-oa-permissions.csv"
+filename <- "2021-04-25_intovalue-filtered-oa-permissions"
 
-data <- read_csv(file.path(data_dir, filename), col_types = "ccdddcccccdccccdlllllcccccDlclclllccccdcDlllc")
+data <- read_csv(file.path(data_dir, paste0(filename, ".csv")), col_types = "cdccccccDlclclllccccccDlll")
 
-archiveable <- data %>%
-  filter(permission_postprint == TRUE)
-n_data <- nrow(archiveable)
+results <- data %>%
+  filter(color == "closed") %>%
+  rename(permission = permission_postprint) %>%
+  mutate(permission = ifelse(permission, "yes", "no")) %>%
+  mutate(permission = ifelse(is.na(permission), "nodata", permission)) %>%
+  count(permission) %>%
+  rename(count = n) %>%
+  arrange(desc(count)) %>%
+  mutate(lab_ypos = cumsum(count) - 0.5 * count) %>%
+  mutate(publications = "closed")
 
-archiveable <- archiveable %>%
-  group_by(publisher) %>%
-  summarize(Articles = n()) %>%
-  arrange(desc(Articles)) %>%
-  mutate(version = "postprint") %>%
-  mutate(lab_ypos = cumsum(Articles) - 0.5 * Articles) %>%
-  slice(1:5)
-#knitr::kable()
-
-top_five <- sum(archiveable$Articles)
-
-archiveable <- archiveable %>%
-  add_row(publisher = "Other",
-          Articles = n_data - top_five,
-          version = "postprint",
-          lab_ypos = n_data - 0.5 * (n_data - top_five))
-
-archiveable$publisher <- factor(archiveable$publisher, levels = archiveable$publisher[6:1])
-
-png(file.path(data_dir, paste0(filename, "-publishers.png")),
+png(file.path(data_dir, paste0(filename, ".png")),
     width = 6,
     height = 4,
     units = 'in',
     res = 300)
 
-first <- "#0A2F51"
+first <- "#1D9A6C"
 second <- "#137177"
-third <- "#1D9A6C"
-fourth <- "#56B870"
-fifth <- "#99D492"
-sixth <- "#BFE1B0"
+third <- "#0A2F51"
 
-c <- ggplot(data = archiveable, aes(x = version, y = Articles)) +
-  geom_col(aes(fill = publisher), width = 0.7)+
-  ggtitle(paste0("Top 5 publishers of self-archiveable publications (n = ", n_data, ")")) +
-  geom_text(aes(y = lab_ypos, label = Articles, group=publisher), color = "white") +
-  scale_fill_manual(values = c(sixth, fifth, fourth, third, second, first))
+p <- ggplot(data = results, aes(x = publications, y = count)) + 
+  geom_col(aes(fill = permission), width = 0.7) +
+  ggtitle(paste0("Permission to archive the postprint for closed publications (n = ", sum(results$count), ")")) +
+  geom_text(aes(y = lab_ypos, label = round(count, digits = 1), group=permission), color = "white") +
+  ylab("Publications") + 
+  scale_fill_manual(values = c(third, second, first))
 
-print(c)
+print(p)
 dev.off()
-
-print(paste0("Number of self-archiveable publications: ", n_data))
