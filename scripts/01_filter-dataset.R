@@ -1,25 +1,29 @@
 # ----------------------------------------------------------------------------------------------------------------
-# Optional: Generate a filtered dataset based on the main results table
+# Optional: Generate a filtered dataset based on the original IntoValue dataset
 # ----------------------------------------------------------------------------------------------------------------
 
 source(here::here("scripts", "environment.R"))
 
-selected_umc <- "berlin"
-selected_year <- 2018
-selected_approach <- "approach_3"
+filename <- "intovalue"
 
-# Load the main dataset with all publications and specificity checks results
-data <- read_csv(file.path(data_dir, "main.csv"), col_types = "ccdddcccccdccccdlllllc")
+# Load the original dataset
+data <- read_csv(file.path(data_dir, paste0(filename, ".csv")))
 
-# Duplicate and filter for desired publications
+# Filter for trials with pre-defined characteristics
 data_filtered <- data %>%
-  filter(city == selected_umc) %>%
-  filter(year_published == selected_year) %>%
-  filter(approach == selected_approach)
+  filter(has_german_umc_lead,
+         has_publication,
+         !is.na(doi),
+         recruitment_status=="Completed",
+         main_sponsor=="Other")
 
-#--- Extract total number of publications
+# Remove duplicates
+data_filtered <- distinct(data_filtered, doi, .keep_all = TRUE)
+
+data_filtered <- data_filtered %>%
+  select(id, pmid, doi, lead_cities)
 
 print(paste0("Total number of publications:", nrow(data_filtered)))
 
 # Save the resulting file to CSV
-write_csv(data_filtered, file.path(data_dir, paste0(selected_umc, "-", selected_year, ".csv")))
+write_csv(data_filtered, file.path(data_dir, paste0(filename, "-filtered.csv")))
