@@ -14,7 +14,7 @@ import os
 
 
 # Define file name
-filename = "2021-05-26_intovalue-filtered-oa"
+filename = "oa-data"
 
 # Load paths from the config file
 cfg = configparser.ConfigParser()
