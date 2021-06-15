@@ -34,8 +34,8 @@ data_file = os.path.join(data_folder, filename + ".csv")
 data = pd.read_csv(data_file)
 
 # Filter for closed and bronze articles
-closed = data[(data['color'] == 'closed') | (data['color'] == 'bronze')]
-print("Number of closed or bronze publications: ", closed.shape[0])
+closed = data[(data['color'] == 'closed')]
+print("Number of closed publications: ", closed.shape[0])
 
 # Base URL
 url = "https://permissions.shareyourpaper.org/doi/"
