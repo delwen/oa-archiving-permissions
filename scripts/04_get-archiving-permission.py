@@ -69,7 +69,7 @@ def call_api(url, doi):
     cache_key = cache.create_key(prepped)
 
     try:
-        response, _ = cache.get_response_and_time(cache_key)
+        response = cache.get_response(cache_key)
     except (ImportError, TypeError):
         response = None
 
