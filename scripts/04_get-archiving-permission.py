@@ -33,7 +33,7 @@ data_file = os.path.join(data_folder, filename + ".csv")
 # Read input dataset containing DOIs and OA status
 data = pd.read_csv(data_file)
 
-# Filter for closed and bronze articles
+# Filter for closed publications
 closed = data[(data['color'] == 'closed')]
 print("Number of closed publications: ", closed.shape[0])
 
