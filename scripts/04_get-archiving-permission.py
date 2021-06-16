@@ -83,39 +83,55 @@ def get_parameters(output_formatted):
     if not output_formatted.get("best_permission"):
         return None
 
+    best_permission = output_formatted["best_permission"]
+
     # Can you self-archive the manuscript in any way?
-    can_archive = output_formatted["best_permission"]["can_archive"]
+    can_archive = best_permission.get("can_archive")
 
     # Where can the version named be archived?
-    archiving_locations = output_formatted["best_permission"]["locations"]
-    inst_repository = 'institutional repository' in archiving_locations
+    archiving_locations = best_permission.get("locations")
+
+    if not archiving_locations:
+        inst_repository = None
+    else:
+        inst_repository = 'institutional repository' in archiving_locations
 
     # What versions can be archived?
-    versions = output_formatted["best_permission"]["versions"]
-    submitted_version = 'submittedVersion' in versions
-    accepted_version = 'acceptedVersion' in versions
-    published_version = 'publishedVersion' in versions
+    versions = best_permission.get("versions")
+
+    if not versions:
+        submitted_version = None
+        accepted_version = None
+        published_version = None
+    else:
+        submitted_version = 'submittedVersion' in versions
+        accepted_version = 'acceptedVersion' in versions
+        published_version = 'publishedVersion' in versions
 
     # License required to be applied to the article
-    licenses_required = output_formatted["best_permission"]["licences"]
+    licenses_required = best_permission.get("licences")
 
     # What institution is issuing the best permission?
-    permission_issuer = output_formatted["best_permission"]["issuer"]["type"]
+    permission_issuer = best_permission["issuer"].get("type")
 
     # What is the embargo?
-    embargo = output_formatted["best_permission"]["embargo_months"]
+    embargo = best_permission.get("embargo_months")
 
-    # If there is an embargo, compare the calculated elapsed date to query date
-    if embargo == 0:
+    if not embargo:
         date_elapsed_embargo = None
-        embargo_na_or_elapsed = True
+        embargo_na_or_elapsed = None
     else:
-        date_elapsed_embargo = output_formatted["best_permission"]["embargo_end"]
-        embargo_na_or_elapsed = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d') < today
+        # Compare the calculated elapsed date to query date
+        if embargo == 0:
+            date_elapsed_embargo = None
+            embargo_na_or_elapsed = True
+        else:
+            date_elapsed_embargo = best_permission.get("embargo_end")
+            embargo_na_or_elapsed = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d') < today
 
     # Define a final permission that depends on several conditions being met
-    permission_accepted = can_archive & accepted_version & embargo_na_or_elapsed & inst_repository
-    permission_published = can_archive & published_version & embargo_na_or_elapsed & inst_repository
+    permission_accepted = can_archive and accepted_version and embargo_na_or_elapsed and inst_repository
+    permission_published = can_archive and published_version and embargo_na_or_elapsed and inst_repository
 
     return can_archive, archiving_locations, inst_repository, versions, submitted_version, accepted_version, \
            published_version, licenses_required, permission_issuer, embargo, date_elapsed_embargo, \
