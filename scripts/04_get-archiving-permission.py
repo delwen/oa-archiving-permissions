@@ -22,7 +22,7 @@ cfg.read("config.ini")
 
 # Get date to add to output file names
 today = datetime.datetime.today()
-now = today.strftime("%Y-%m-%d")
+datestamp = today.strftime("%Y-%m-%d")
 
 # Define data folder
 data_folder = cfg["paths"]["data"]
@@ -179,13 +179,13 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permission_postprint', 'permission_publisher_pdf'])
 
 merged_result = data.merge(df, on='doi', how='left')
-merged_result.to_csv(os.path.join(data_folder, now + "_" + filename + "-permissions.csv"), index=False)
+merged_result.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
 no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
 
-unresolved.to_csv(os.path.join(data_folder, now + "_" + filename + "-unresolved-permissions.csv"), index=False)
-no_auth_perm.to_csv(os.path.join(data_folder, now + "_" + filename + "-no-auth-permissions.csv"), index=False)
+unresolved.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-unresolved-permissions.csv"), index=False)
+no_auth_perm.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-no-auth-permissions.csv"), index=False)
 
 print("Number of unresolved DOIs: ", len(unresolved_dois))
 print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
