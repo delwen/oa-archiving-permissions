@@ -1,6 +1,6 @@
-# Gets article-level self-archiving permission for the accepted version of manuscript
-# by querying ShareYourPaper's permissions API (https://shareyourpaper.org/permissions/about#api)
-# Focuses on the authoritative permission
+# Gets article-level self-archiving permission for publications
+# by querying ShareYourPaper's permissions API (https://openaccessbutton.org/api)
+# Focuses on the best permission
 
 import pandas as pd
 import requests
@@ -38,7 +38,7 @@ closed = data[(data['color'] == 'closed')]
 print("Number of closed publications: ", closed.shape[0])
 
 # Base URL
-url = "https://permissions.shareyourpaper.org/doi/"
+url = "https://api.openaccessbutton.org/permissions/"
 
 dois = set(closed['doi'].values.tolist())
 
@@ -79,68 +79,47 @@ def call_api(url, doi):
 
 def get_parameters(output_formatted):
 
-    # Skip DOIs which do not have an authoritative permission
-    if not output_formatted["authoritative_permission"]:
+    # Skip DOIs which have no best_permission key or a null best_permission
+    if not output_formatted.get("best_permission"):
         return None
+
     # Can you self-archive the manuscript in any way?
-    can_archive = output_formatted["authoritative_permission"]["application"]["can_archive"]
+    can_archive = output_formatted["best_permission"]["can_archive"]
 
     # Where can the version named be archived?
-    archiving_locations = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "archiving_locations_allowed"]
-    inst_repository = True if 'institutional repository' in archiving_locations else False
+    archiving_locations = output_formatted["best_permission"]["locations"]
+    inst_repository = 'institutional repository' in archiving_locations
 
     # What versions can be archived?
-    version = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "versions_archivable"]
-    preprint = True if 'preprint' in version else False
-    postprint = True if 'postprint' in version else False
-    publisher_pdf = True if 'publisher pdf' in version else False
+    versions = output_formatted["best_permission"]["versions"]
+    submitted_version = 'submittedVersion' in versions
+    accepted_version = 'acceptedVersion' in versions
+    published_version = 'publishedVersion' in versions
 
     # License required to be applied to the article
-    licenses_required = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "licenses_required"]
+    licenses_required = output_formatted["best_permission"]["licences"]
 
-    # The institution the author must be affiliated with in order for this policy to apply
-    author_afil_requir = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "author_affiliation_requirement"]
+    # What institution is issuing the best permission?
+    permission_issuer = output_formatted["best_permission"]["issuer"]["type"]
 
-    # The role an author must have in order for this policy to apply
-    author_afil_role_requir = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "author_affiliation_role_requirement"]
+    # What is the embargo?
+    embargo = output_formatted["best_permission"]["embargo_months"]
 
-    # Permission only applies when the work is funded by this group
-    author_funding_requir = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "author_funding_requirement"]
-
-    # What percentage of the output must be funded for this to apply?
-    author_funding_prop_requir = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "author_funding_proportion_requirement"]
-
-    # What institution is issuing this permission?
-    permission_issuer = output_formatted["authoritative_permission"]["issuer"]["permission_type"]
-
-    # When does the embargo end?
-    date_elapsed_embargo = output_formatted["authoritative_permission"]["application"]["can_archive_conditions"][
-        "postprint_embargo_end_calculated"]
-
-    # If there is an embargo, convert it to date type and compare to query (current) date
-    if date_elapsed_embargo is None:
+    # If there is an embargo, compare the calculated elapsed date to query date
+    if embargo == 0:
+        date_elapsed_embargo = None
         embargo_na_or_elapsed = True
     else:
-        date_elapsed_embargo = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d')
-        embargo_na_or_elapsed = date_elapsed_embargo < today
+        date_elapsed_embargo = output_formatted["best_permission"]["embargo_end"]
+        embargo_na_or_elapsed = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d') < today
 
     # Define a final permission that depends on several conditions being met
-    permission_postprint = True if (can_archive is True & postprint is True &
-                                    embargo_na_or_elapsed is True & inst_repository is True) else False
-    permission_publisher_pdf = True if (can_archive is True & publisher_pdf is True &
-                                    embargo_na_or_elapsed is True & inst_repository is True) else False
+    permission_accepted = can_archive & accepted_version & embargo_na_or_elapsed & inst_repository
+    permission_published = can_archive & published_version & embargo_na_or_elapsed & inst_repository
 
-    return can_archive, archiving_locations, inst_repository, version, preprint, postprint, publisher_pdf,\
-           licenses_required, author_afil_requir, author_afil_role_requir, author_funding_requir,\
-           author_funding_prop_requir, permission_issuer, date_elapsed_embargo, embargo_na_or_elapsed, permission_postprint,\
-           permission_publisher_pdf
+    return can_archive, archiving_locations, inst_repository, versions, submitted_version, accepted_version, \
+           published_version, licenses_required, permission_issuer, embargo, date_elapsed_embargo, \
+           embargo_na_or_elapsed, permission_accepted, permission_published
 
 
 def jprint(obj):
@@ -172,11 +151,10 @@ for doi in dois:
     result.append((doi, ) + tmp)
 
 # Create a dataframe to store the results
-df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 'inst_repository', 'version', 'preprint',
-                                   'postprint', 'publisher_pdf', 'licenses_required', 'author_afil_requir',
-                                   'author_afil_role_requir', 'author_funding_requir', 'author_funding_prop_requir',
-                                   'permissions_issuer', 'date_elapsed_embargo', 'embargo_na_or_elapsed',
-                                   'permission_postprint', 'permission_publisher_pdf'])
+df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 'inst_repository', 'versions',
+                                   'submitted_version', 'accepted_version', 'published_version', 'licenses_required',
+                                   'permission_issuer', 'embargo', 'date_elapsed_embargo', 'embargo_na_or_elapsed',
+                                   'permission_accepted', 'permission_published'])
 
 merged_result = data.merge(df, on='doi', how='left')
 merged_result.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-permissions.csv"), index=False)
