@@ -129,7 +129,7 @@ def jprint(obj):
 
 
 unresolved_dois = []
-no_auth_perm_dois = []
+no_best_perm_dois = []
 result = []
 
 # make the API request
@@ -145,7 +145,7 @@ for doi in dois:
     tmp = get_parameters(output)
     if not tmp:
         print(f"SKIPPED: {doi}")
-        no_auth_perm_dois.append(doi)
+        no_best_perm_dois.append(doi)
         continue
 
     result.append((doi, ) + tmp)
@@ -160,10 +160,10 @@ merged_result = data.merge(df, on='doi', how='left')
 merged_result.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
-no_auth_perm = pd.DataFrame(no_auth_perm_dois, columns=['doi'])
+no_best_perm = pd.DataFrame(no_best_perm_dois, columns=['doi'])
 
 unresolved.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-unresolved-permissions.csv"), index=False)
-no_auth_perm.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-no-auth-permissions.csv"), index=False)
+no_best_perm.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-no-best-permissions.csv"), index=False)
 
 print("Number of unresolved DOIs: ", len(unresolved_dois))
-print("Number of DOIs without an authoritative permission: ", len(no_auth_perm_dois))
+print("Number of DOIs without a best permission: ", len(no_best_perm_dois))
