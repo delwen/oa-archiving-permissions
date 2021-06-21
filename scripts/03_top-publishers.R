@@ -46,7 +46,7 @@ fifth <- "#99D492"
 sixth <- "#BFE1B0"
 
 c <- ggplot(data = top_publishers, aes(x = OA_status, y = Publications)) +
-  geom_col(aes(fill = publisher), width = 0.7)+
+  geom_col(aes(fill = publisher), width = 0.7, alpha = 0.8)+
   ggtitle(paste0("Top 5 publishers of closed publications (n = ", n_closed, ")")) +
   geom_text(aes(y = lab_ypos, label = Publications, group=publisher), color = "white") +
   scale_fill_manual(values = c(sixth, fifth, fourth, third, second, first))
