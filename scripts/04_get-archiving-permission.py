@@ -13,7 +13,7 @@ import datetime
 import os
 
 
-# Define file name
+# Define file name without filename extension
 filename = "oa-data"
 
 # Load paths from the config file
@@ -117,25 +117,27 @@ def get_parameters(output_formatted):
     # What is the embargo?
     embargo = best_permission.get("embargo_months")
 
+    # If embargo_months key does not exist, we can't draw a conclusion
     if not embargo:
-        date_elapsed_embargo = None
-        embargo_na_or_elapsed = None
+        date_embargo_elapsed = None
+        is_embargo_elapsed = None
     else:
-        # Compare the calculated elapsed date to query date
+        # If embargo is 0 months, it elapsed upon publication (TODO: make publication date)
+        # If embargo > 0 months, compare the calculated elapsed date to query date
         if embargo == 0:
-            date_elapsed_embargo = None
-            embargo_na_or_elapsed = True
+            date_embargo_elapsed = None
+            is_embargo_elapsed = True
         else:
-            date_elapsed_embargo = best_permission.get("embargo_end")
-            embargo_na_or_elapsed = datetime.datetime.strptime(date_elapsed_embargo, '%Y-%m-%d') < today
+            date_embargo_elapsed = best_permission.get("embargo_end")
+            is_embargo_elapsed = datetime.datetime.strptime(date_embargo_elapsed, '%Y-%m-%d') < today
 
     # Define a final permission that depends on several conditions being met
-    permission_accepted = can_archive and accepted_version and embargo_na_or_elapsed and inst_repository
-    permission_published = can_archive and published_version and embargo_na_or_elapsed and inst_repository
+    permission_accepted = can_archive and accepted_version and is_embargo_elapsed and inst_repository
+    permission_published = can_archive and published_version and is_embargo_elapsed and inst_repository
 
     return can_archive, archiving_locations, inst_repository, versions, submitted_version, accepted_version, \
-           published_version, licenses_required, permission_issuer, embargo, date_elapsed_embargo, \
-           embargo_na_or_elapsed, permission_accepted, permission_published
+           published_version, licenses_required, permission_issuer, embargo, date_embargo_elapsed, \
+           is_embargo_elapsed, permission_accepted, permission_published
 
 
 def jprint(obj):
@@ -169,7 +171,7 @@ for doi in dois:
 # Create a dataframe to store the results
 df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 'inst_repository', 'versions',
                                    'submitted_version', 'accepted_version', 'published_version', 'licenses_required',
-                                   'permission_issuer', 'embargo', 'date_elapsed_embargo', 'embargo_na_or_elapsed',
+                                   'permission_issuer', 'embargo', 'date_embargo_elapsed', 'is_embargo_elapsed',
                                    'permission_accepted', 'permission_published'])
 
 merged_result = data.merge(df, on='doi', how='left')
