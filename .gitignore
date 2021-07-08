@@ -13,3 +13,5 @@ config.ini
 .idea/
 venv/*
 
+# Logging file
+syp-query.log
