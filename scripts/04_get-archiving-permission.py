@@ -11,18 +11,24 @@ import time
 import configparser
 import datetime
 import os
+import logging
 
 
 # Define file name without filename extension
 filename = "oa-data"
 
+# Configure logger
+logging.basicConfig(filename='syp-query.log',
+                    level=logging.INFO,
+                    format='%(message)s %(asctime)s', datefmt='%d-%m-%Y %I:%M:%S %p')
+logging.info('ShareYourPaper query date:')
+
 # Load paths from the config file
 cfg = configparser.ConfigParser()
 cfg.read("config.ini")
 
-# Get date to add to output file names
+# Get today's date to compare to embargo
 today = datetime.datetime.today()
-datestamp = today.strftime("%Y-%m-%d")
 
 # Define data folder
 data_folder = cfg["paths"]["data"]
@@ -175,13 +181,13 @@ df = pd.DataFrame(result, columns=['doi', 'can_archive', 'archiving_locations', 
                                    'permission_accepted', 'permission_published'])
 
 merged_result = data.merge(df, on='doi', how='left')
-merged_result.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-permissions.csv"), index=False)
+merged_result.to_csv(os.path.join(data_folder, filename + "-permissions.csv"), index=False)
 
 unresolved = pd.DataFrame(unresolved_dois, columns=['doi'])
 no_best_perm = pd.DataFrame(no_best_perm_dois, columns=['doi'])
 
-unresolved.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-unresolved-permissions.csv"), index=False)
-no_best_perm.to_csv(os.path.join(data_folder, datestamp + "_" + filename + "-no-best-permissions.csv"), index=False)
+unresolved.to_csv(os.path.join(data_folder, filename + "-unresolved-permissions.csv"), index=False)
+no_best_perm.to_csv(os.path.join(data_folder, filename + "-no-best-permissions.csv"), index=False)
 
 print("Number of unresolved DOIs: ", len(unresolved_dois))
 print("Number of DOIs without a best permission: ", len(no_best_perm_dois))
