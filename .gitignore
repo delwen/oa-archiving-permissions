@@ -6,6 +6,9 @@
 # data folder
 data/
 
+# download cache
+permissions_cache.sqlite
+
 # configuration file
 config.ini
 
@@ -15,3 +18,6 @@ venv/*
 
 # Logging file
 syp-query.log
+
+# macOS
+.DS_Store
