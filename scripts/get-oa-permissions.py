@@ -4,6 +4,7 @@
 # by querying ShareYourPaper's permissions API (https://openaccessbutton.org/api)
 # Focuses on the best permission
 
+import argparse
 import configparser
 import datetime
 import json
@@ -121,6 +122,13 @@ def jprint(obj):
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Get OA archiving permission')
+    parser.add_argument('--config', metavar='FILE', type=str,
+                        default='config.ini', dest="config",
+                        help='Configuration file to use (default: config.ini)')
+
+    args = parser.parse_args()
+
     # Define input and output filenames
     filename_oa_data = "oa-unpaywall"
     filename_syp_results = "oa-syp"
@@ -133,7 +141,7 @@ def main():
 
     # Load paths from the config file
     cfg = configparser.ConfigParser()
-    cfg.read("config.ini")
+    cfg.read(args.config)
 
     # Define data folder
     data_folder = cfg["paths"]["data_raw"]
