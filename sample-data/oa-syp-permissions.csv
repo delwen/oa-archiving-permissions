@@ -1,0 +1,6 @@
+doi,syp_response,can_archive,archiving_locations,inst_repository,versions,submitted_version,accepted_version,published_version,licenses_required,permission_issuer,embargo,date_embargo_elapsed,is_embargo_elapsed,permission_accepted,permission_published
+10.1200/jco.2013.54.4833,response,True,['institutional repository'],True,"['publishedVersion', 'acceptedVersion']",False,True,True,"[{'type': 'other-closed', 'terms': ''}]",publisher,,,,,
+10.1002/bjs.9959,response,True,['institutional repository'],True,"['acceptedVersion', 'submittedVersion']",True,True,False,[],publisher,,,,,
+10.1111/j.1365-2133.2012.11156.x,response,True,['institutional repository'],True,['acceptedVersion'],False,True,False,"[{'type': 'other (non-commercial)', 'terms': 'https://perma.cc/6S5D-XMF4'}]",journal,,,,,
+10.1056/nejmoa0908806,response,True,['institutional repository'],True,['publishedVersion'],False,False,True,[],journal,,,,,
+10.1186/1471-2407-11-97,response,True,['institutional repository'],True,"['submittedVersion', 'acceptedVersion', 'publishedVersion']",True,True,True,"[{'type': 'cc-by', 'terms': ''}]",article,,,,,
