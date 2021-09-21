@@ -162,6 +162,7 @@ def main():
 
     unresolved_dois = []
     no_best_perm_dois = []
+    no_embargo_dois = []
     syp_response = []
     result = []
 
@@ -183,7 +184,13 @@ def main():
             syp_response.append((doi, "no_best_permission"))
             continue
 
-        syp_response.append((doi, "response"))
+        if not output["best_permission"].get("embargo_months"):
+            print(f"NO EMBARGO: {doi}")
+            no_embargo_dois.append(doi)
+            syp_response.append((doi, "no_embargo"))
+
+        else:
+            syp_response.append((doi, "response"))
         result.append((doi, ) + tmp)
 
     # Create a dataframe to store the results
@@ -205,6 +212,7 @@ def main():
 
     print("Number of unresolved DOIs: ", len(unresolved_dois))
     print("Number of DOIs without a best permission: ", len(no_best_perm_dois))
+    print("Number of DOIs without an embargo: ", len(no_embargo_dois))
 
 
 if __name__ == "__main__":
