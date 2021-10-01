@@ -19,6 +19,9 @@ venv/*
 # Logging file
 syp-query.log
 
+# jupyter notebook
+.ipynb_checkpoints
+
 # macOS
 .DS_Store
 oa-archiving-permissions.Rproj
