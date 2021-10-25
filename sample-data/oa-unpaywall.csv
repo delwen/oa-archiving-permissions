@@ -1,21 +1,21 @@
-doi
-10.1200/jco.2013.54.4833
-10.1002/bjs.9959
-10.1111/j.1365-2133.2012.11156.x
-10.1182/blood-2012-09-456988
-10.1016/s1470-2045(11)70242-x
-10.1016/s1470-2045(12)70212-7
-10.1016/s1470-2045(13)70011-1
-10.1200/jco.2012.48.5680
-10.3109/15622975.2011.583940
-10.1016/s1470-2045(12)70349-2
-10.1583/13-4275mr.1
-10.1016/j.thromres.2009.03.013
-10.1200/jco.2012.46.4743
-10.1016/s1470-2045(11)70008-0
-10.1056/nejmoa1009540
-10.1159/000323444
-10.1016/s0140-6736(11)61938-7
-10.1111/bjh.13222
-10.1016/j.ygyno.2012.04.050
-10.1161/circep.115.003337
+doi,color,issn,journal,publisher,publication_date_unpaywall
+10.1200/jco.2013.54.4833,closed,"0732-183X,1527-7755",Journal of Clinical Oncology,American Society of Clinical Oncology (ASCO),2014-08-10
+10.1002/bjs.9959,closed,"0007-1323,1365-2168",British Journal of Surgery,Oxford University Press (OUP),2015-10-29
+10.1111/j.1365-2133.2012.11156.x,closed,0007-0963,British Journal of Dermatology,Wiley,2012-08-27
+10.1182/blood-2012-09-456988,closed,"0006-4971,1528-0020",Blood,American Society of Hematology,2013-09-26
+10.1016/s1470-2045(11)70242-x,closed,1470-2045,The Lancet Oncology,Elsevier BV,2011-12-01
+10.1016/s1470-2045(12)70212-7,closed,1470-2045,The Lancet Oncology,Elsevier BV,2012-07-01
+10.1016/s1470-2045(13)70011-1,closed,1470-2045,The Lancet Oncology,Elsevier BV,2013-03-01
+10.1200/jco.2012.48.5680,closed,"0732-183X,1527-7755",Journal of Clinical Oncology,American Society of Clinical Oncology (ASCO),2013-07-20
+10.3109/15622975.2011.583940,closed,"1562-2975,1814-1412",The World Journal of Biological Psychiatry,Informa UK Limited,2011-07-08
+10.1016/s1470-2045(12)70349-2,closed,1470-2045,The Lancet Oncology,Elsevier BV,2012-10-01
+10.1583/13-4275mr.1,closed,"1526-6028,1545-1550",Journal of Endovascular Therapy,International Society of Endovascular Specialists,2013-10-01
+10.1016/j.thromres.2009.03.013,closed,0049-3848,Thrombosis Research,Elsevier BV,2009-11-01
+10.1200/jco.2012.46.4743,closed,"0732-183X,1527-7755",Journal of Clinical Oncology,American Society of Clinical Oncology (ASCO),2013-06-10
+10.1016/s1470-2045(11)70008-0,closed,1470-2045,The Lancet Oncology,Elsevier BV,2011-03-01
+10.1056/nejmoa1009540,closed,"0028-4793,1533-4406",New England Journal of Medicine,Massachusetts Medical Society,2010-12-16
+10.1159/000323444,closed,"0033-3190,1423-0348",Psychotherapy and Psychosomatics,S. Karger AG,2011-01-01
+10.1016/s0140-6736(11)61938-7,closed,0140-6736,The Lancet,Elsevier BV,2012-04-01
+10.1111/bjh.13222,closed,0007-1048,British Journal of Haematology,Wiley,2014-11-17
+10.1016/j.ygyno.2012.04.050,closed,0090-8258,Gynecologic Oncology,Elsevier BV,2012-08-01
+10.1161/circep.115.003337,closed,"1941-3149,1941-3084",Circulation: Arrhythmia and Electrophysiology,Ovid Technologies (Wolters Kluwer Health),2016-01-01
