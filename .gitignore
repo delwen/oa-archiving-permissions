@@ -18,6 +18,7 @@ venv/*
 
 # Logging file
 syp-query.log
+queries.log
 
 # macOS
 .DS_Store
