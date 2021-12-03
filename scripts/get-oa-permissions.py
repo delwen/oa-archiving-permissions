@@ -162,7 +162,7 @@ def main():
 
     unresolved_dois = []
     no_best_perm_dois = []
-    no_embargo_dois = []
+    no_embargo_info_dois = []
     syp_response = []
     result = []
 
@@ -185,9 +185,12 @@ def main():
             continue
 
         if not output["best_permission"].get("embargo_months"):
-            print(f"NO EMBARGO: {doi}")
-            no_embargo_dois.append(doi)
-            syp_response.append((doi, "no_embargo"))
+            if output["best_permission"].get("embargo_months") == 0:
+                syp_response.append((doi, "response"))
+            else:
+                print(f"NO EMBARGO: {doi}")
+                no_embargo_info_dois.append(doi)
+                syp_response.append((doi, "no_embargo_info"))
 
         else:
             syp_response.append((doi, "response"))
@@ -212,7 +215,7 @@ def main():
 
     print("Number of unresolved DOIs: ", len(unresolved_dois))
     print("Number of DOIs without a best permission: ", len(no_best_perm_dois))
-    print("Number of DOIs without an embargo: ", len(no_embargo_dois))
+    print("Number of DOIs without embargo information: ", len(no_embargo_info_dois))
 
 
 if __name__ == "__main__":
