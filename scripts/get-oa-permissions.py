@@ -184,14 +184,10 @@ def main():
             syp_response.append((doi, "no_best_permission"))
             continue
 
-        if not output["best_permission"].get("embargo_months"):
-            if output["best_permission"].get("embargo_months") == 0:
-                syp_response.append((doi, "response"))
-            else:
-                print(f"NO EMBARGO: {doi}")
-                no_embargo_info_dois.append(doi)
-                syp_response.append((doi, "no_embargo_info"))
-
+        if output["best_permission"].get("embargo_months") is None:
+            print(f"NO EMBARGO: {doi}")
+            no_embargo_info_dois.append(doi)
+            syp_response.append((doi, "no_embargo_info"))
         else:
             syp_response.append((doi, "response"))
         result.append((doi, ) + tmp)
