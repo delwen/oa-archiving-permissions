@@ -26,7 +26,6 @@ intovalue_dois <- intovalue %>%
     iv_interventional,
     has_german_umc_lead,
     has_publication,
-    publication_type == "journal publication",
     !is.na(doi)
   ) %>%
   distinct(doi) %>%
@@ -58,7 +57,16 @@ email_api  <-
   }
 )
 
-# Query Unpaywall API with journal > repository hierarchy (except bronze) ------
+# Download Unpaywall data
+
+oa_raw <-
+  unpaywallR::dois_OA_colors_fetch(
+    intovalue_dois,
+    email_api,
+    clusters = 2
+  )
+
+# Get color based on hierarchy: journal > repository (except bronze) ------
 
 hierarchy <-
   c("gold",
@@ -68,16 +76,13 @@ hierarchy <-
     "closed")
 
 oa_results <-
-  unpaywallR::dois_OA_colors(
-    intovalue_dois,
-    email_api,
-    clusters = 2,
-    color_hierarchy = hierarchy
+  unpaywallR::dois_OA_pick_color(
+    oa_raw,
+    hierarchy
   ) %>%
-  rename(color = OA_color, publication_date_unpaywall = date)
+  rename(color = OA_color, pub_date_unpaywall = date)
 
-
-# Query Unpaywall API with green OA > all OA routes hierarchy -------------
+# Get color based on hierarchy: green OA > all OA routes ------
 
 hierarchy_green <-
   c("green",
@@ -87,16 +92,13 @@ hierarchy_green <-
     "closed")
 
 oa_results_green <-
-  unpaywallR::dois_OA_colors(
-    intovalue_dois,
-    email_api,
-    clusters = 2,
-    color_hierarchy = hierarchy_green
+  unpaywallR::dois_OA_pick_color(
+    oa_raw,
+    hierarchy_green
   ) %>%
   select(doi, color_green = OA_color)
 
-
-# Query Unpaywall API with all OA routes > green OA hierarchy -------------
+# Get color based on hierarchy: all OA routes > green OA ------
 
 hierarchy_green_only <-
   c("gold",
@@ -106,14 +108,11 @@ hierarchy_green_only <-
     "closed")
 
 oa_results_green_only <-
-  unpaywallR::dois_OA_colors(
-    intovalue_dois,
-    email_api,
-    clusters = 2,
-    color_hierarchy = hierarchy_green_only
+  unpaywallR::dois_OA_pick_color(
+    oa_raw,
+    hierarchy_green_only
   ) %>%
   select(doi, color_green_only = OA_color)
-
 
 # Save Unpaywall data -----------------------------------------------------
 
@@ -124,13 +123,12 @@ oa_unpaywall <-
 
 # Keep only publications published in 2010 - 2020
 
-oa_unpaywall$publication_date_unpaywall <- as.Date(oa_unpaywall$publication_date_unpaywall)
-oa_unpaywall$publication_year_unpaywall <- oa_unpaywall$publication_date_unpaywall %>%
+oa_unpaywall$pub_year_unpaywall <- as.Date(oa_unpaywall$pub_date_unpaywall) %>%
   format("%Y")
 
 oa_unpaywall <- oa_unpaywall %>%
   filter(
-    publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021"
+    pub_year_unpaywall > "2009" & pub_year_unpaywall < "2021"
   )
 
 write_csv(oa_unpaywall, here("data", "oa-unpaywall.csv"))
