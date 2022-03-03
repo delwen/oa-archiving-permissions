@@ -14,6 +14,8 @@ oa_data <- oa_unpaywall %>%
   # Join share your paper data
   left_join(oa_syp, by = "doi") %>%
   
+  rename(journal_unpaywall = journal) %>%
+  
   # Create booleans for whether publication is OA and, if not, whether can be archived
   # `is_oa` is TRUE for publications that are either gold, green, hybrid, or bronze;
   #            FALSE if closed;
