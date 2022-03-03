@@ -80,7 +80,7 @@ oa_results <-
     oa_raw,
     hierarchy
   ) %>%
-  rename(color = OA_color, pub_date_unpaywall = date)
+  rename(color = OA_color, publication_date_unpaywall = date)
 
 # Get color based on hierarchy: green OA > all OA routes ------
 
@@ -123,12 +123,12 @@ oa_unpaywall <-
 
 # Keep only publications published in 2010 - 2020
 
-oa_unpaywall$pub_year_unpaywall <- as.Date(oa_unpaywall$pub_date_unpaywall) %>%
+oa_unpaywall$publication_year_unpaywall <- as.Date(oa_unpaywall$publication_date_unpaywall) %>%
   format("%Y")
 
 oa_unpaywall <- oa_unpaywall %>%
   filter(
-    pub_year_unpaywall > "2009" & pub_year_unpaywall < "2021"
+    publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021"
   )
 
 write_csv(oa_unpaywall, here("data", "oa-unpaywall.csv"))
