@@ -111,7 +111,7 @@ p <- plot_ly(
     )
   ) %>%
   layout(
-    #title = "Self-archiving permissions of paywalled publications",
+    #title = "Realised potential of green OA for paywalled publications",
     barmode = 'stack',
     legend = list(
       font = list(
