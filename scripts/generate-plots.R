@@ -139,7 +139,7 @@ p <- plot_ly(
 # Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
 
 plot_data <- tribble(
-  ~x_label, ~gold,    ~green,    ~hybrid,    ~na,    ~closed,    ~bronze
+  ~x_label, ~gold,    ~green,    ~hybrid,   ~closed,    ~bronze
 )
 
 upperlimit <- 0
@@ -167,13 +167,6 @@ for (year in unique(data$publication_year_unpaywall)) {
     ) %>%
     nrow()
   
-  na_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      is.na(color)
-    ) %>%
-    nrow()
-  
   closed_num <- data %>%
     filter(
       publication_year_unpaywall == year,
@@ -197,8 +190,8 @@ for (year in unique(data$publication_year_unpaywall)) {
     plot_data <- plot_data %>%
       bind_rows(
         tribble(
-          ~x_label, ~gold,    ~green,    ~hybrid,    ~na,    ~closed,    ~bronze,
-          year, gold_num, green_num, hybrid_num, na_num, closed_num, bronze_num
+          ~x_label, ~gold,    ~green,    ~hybrid,   ~closed,    ~bronze,
+          year, gold_num, green_num, hybrid_num, closed_num, bronze_num
         )
       )
   
