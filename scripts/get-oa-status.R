@@ -126,6 +126,12 @@ oa_unpaywall <-
   full_join(oa_results, by = "doi") %>%
   mutate(across(everything(), ~na_if(., "")))
 
+# Explore Unpaywall data --------------------------------------------------
+
+unresolved_dois <- oa_unpaywall %>%
+  filter(is.na(color))
+print(paste("Unpaywall unresolved DOIs:", nrow(unresolved_dois)))
+
 # Keep only publications published in 2010 - 2020
 
 oa_unpaywall$publication_year_unpaywall <- as.Date(oa_unpaywall$publication_date_unpaywall) %>%
@@ -143,23 +149,3 @@ write_csv(oa_unpaywall, here("data", "oa-unpaywall.csv"))
 
 loggit::set_logfile(here::here("queries.log"))
 loggit::loggit("INFO", "Unpaywall")
-
-
-# Explore Unpaywall data --------------------------------------------------
-
-# DOIs with green but neither main nor green only
-oa_unpaywall %>%
-  filter(!is.na(color_green) & is.na(color) & is.na(color_green_only))
-
-# DOIs with green only but neither main nor green
-oa_unpaywall %>%
-  filter(!is.na(color_green_only) & is.na(color) & is.na(color_green))
-
-# DOIs with main but neither green nor green only
-oa_unpaywall %>%
-  filter(!is.na(color) & is.na(color_green) & is.na(color_green_only))
-
-# DOIs with neither main nor green nor green only
-unresolved_dois <- oa_unpaywall %>%
-  filter(is.na(color) & is.na(color_green) & is.na(color_green_only))
-print(paste("Unpaywall unresolved DOIs:", nrow(unresolved_dois)))
