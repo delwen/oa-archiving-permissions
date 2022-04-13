@@ -294,7 +294,6 @@ plot_ly(
 
 # Self-archiving permissions for publications without green version -------
 
-
 results <- data %>%
   filter(color_green != "green") %>%
   rename(permission = is_archivable) %>%
@@ -323,5 +322,5 @@ o <- ggplot(data = results, aes(x = publications, y = count)) +
   ylab("Publications") + xlab("") +
   scale_fill_manual(values = c(third, second, first))
 
-print(p)
+print(o)
 dev.off()
