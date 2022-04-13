@@ -1,6 +1,5 @@
-# Includes adaptations by Maia Salholz-Hillel (see https://github.com/maia-sh/intovalue-data)
-
 # Get open access data from the Unpaywall API
+# Includes adaptations by Maia Salholz-Hillel (see https://github.com/maia-sh/intovalue-data)
 
 library(dplyr)
 library(readr)
@@ -9,22 +8,29 @@ library(rio)
 # renv::install("NicoRiedel/unpaywallR")
 library(unpaywallR)
 
-# Prepare intovalue dois --------------------------------------------------
-# Read in processed Intovalue dataset, apply exclusion criteria, keep only unique DOIs
+# Prepare Intovalue dois --------------------------------------------------
 
+# Read in processed Intovalue dataset
 intovalue <- rio::import("https://github.com/maia-sh/intovalue-data/blob/main/data/processed/trials.rds?raw=true")
 
+# Apply exclusion criteria
 intovalue <- intovalue %>%
+  # Add var for whether a publication was found in manual searches
   mutate(
     has_publication = if_else(publication_type == "journal publication", TRUE, FALSE, missing = FALSE)
-    )
-  
-intovalue_dois <- intovalue %>%
+    ) %>%
   filter(
     iv_completion,
     iv_status,
     iv_interventional,
     has_german_umc_lead,
+    # In case of duplicate trials, exclude IV1 version
+    !(is_dupe & iv_version == 1)
+    )
+
+# Filter for trials with a publication with a DOI, keep only unique DOIs
+intovalue_dois <- intovalue %>%
+  filter(
     has_publication,
     !is.na(doi)
   ) %>%
@@ -32,7 +38,6 @@ intovalue_dois <- intovalue %>%
   pull(doi)
 
 print(paste("Number of DOIs:", length(intovalue_dois)))
-
 
 # Set unpaywall email -----------------------------------------------------
 
