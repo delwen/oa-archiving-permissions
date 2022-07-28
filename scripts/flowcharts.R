@@ -49,13 +49,22 @@ iv_german <- iv_interventional %>%
 print(paste0("Trials not german UMC lead: ", nrow(iv_interventional) - nrow(iv_german)))
 print(paste0("Trials with german UMC lead: ", nrow(iv_german)))
 
+iv_german_unique <- iv_german %>%
+  filter(
+    !(is_dupe & iv_version == 1)
+  )
+
+print(paste0("Duplicate trials: ", nrow(iv_german) - nrow(iv_german_unique)))
+print(paste0("Trials with duplicates removed: ", nrow(iv_german_unique)))
+
+
 
 # Publication screening ---------------------------------------------------
 
-iv_pubs <- iv_german %>%
+iv_pubs <- iv_german_unique %>%
   filter(has_publication)
 
-print(paste0("No publications: ", nrow(iv_german) - nrow(iv_pubs)))
+print(paste0("No publications: ", nrow(iv_german_unique) - nrow(iv_pubs)))
 print(paste0("Trial pubs: ", nrow(iv_pubs)))
 
 iv_doi <- iv_pubs %>%
