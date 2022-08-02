@@ -15,10 +15,6 @@ intovalue <- rio::import("https://github.com/maia-sh/intovalue-data/blob/main/da
 
 # Apply exclusion criteria
 intovalue <- intovalue %>%
-  # Add var for whether a publication was found in manual searches
-  mutate(
-    has_publication = if_else(publication_type == "journal publication", TRUE, FALSE, missing = FALSE)
-    ) %>%
   filter(
     iv_completion,
     iv_status,
