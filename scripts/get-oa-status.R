@@ -1,4 +1,4 @@
-# Get open access data from the Unpaywall API
+# Query Unpaywall via its API to get the OA status of IntoValue publications
 # Includes adaptations by Maia Salholz-Hillel (see https://github.com/maia-sh/intovalue-data)
 
 library(dplyr)
@@ -8,18 +8,19 @@ library(rio)
 # renv::install("NicoRiedel/unpaywallR")
 library(unpaywallR)
 
-# Prepare Intovalue dois --------------------------------------------------
+# Prepare IntoValue dois --------------------------------------------------
 
-# Read in processed Intovalue dataset
+# Read in processed IntoValue dataset
 intovalue <- rio::import("https://github.com/maia-sh/intovalue-data/blob/main/data/processed/trials.rds?raw=true")
 
-# Apply exclusion criteria
+# Apply IntoValue exclusion criteria
 intovalue <- intovalue %>%
   filter(
     iv_completion,
     iv_status,
     iv_interventional,
     has_german_umc_lead,
+    
     # In case of duplicate trials, exclude IV1 version
     !(is_dupe & iv_version == 1)
     )
