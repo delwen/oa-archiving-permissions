@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import time
+from functools import reduce
 
 import pandas as pd
 import requests
@@ -49,6 +50,10 @@ def call_api(url, doi):
         return response.json()
 
     return call_api_server(url, doi)
+
+
+def check_permissions(*args):
+    return reduce(lambda x, y: None if x is None or y is None else x and y, args)
 
 
 def get_parameters(output_formatted):
@@ -107,8 +112,8 @@ def get_parameters(output_formatted):
         is_embargo_elapsed = datetime.datetime.strptime(date_embargo_elapsed, '%Y-%m-%d') < today
 
     # Define a final permission that depends on several conditions being met
-    permission_accepted = can_archive and inst_repository and is_embargo_elapsed and accepted_version
-    permission_published = can_archive and inst_repository and is_embargo_elapsed and published_version
+    permission_accepted = check_permissions(can_archive, inst_repository, is_embargo_elapsed, accepted_version)
+    permission_published = check_permissions(can_archive, inst_repository, is_embargo_elapsed, published_version)
 
     return can_archive, archiving_locations, inst_repository, versions, submitted_version, accepted_version, \
            published_version, licenses_required, permission_issuer, embargo, date_embargo_elapsed, \
