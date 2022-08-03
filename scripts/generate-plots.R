@@ -115,19 +115,19 @@ p <- plot_ly(
     barmode = 'stack',
     legend = list(
       font = list(
-        size = 18
+        size = 12
       )
     ),
     xaxis = list(
       title = list(text = '<b>Year of publication</b>', standoff = 20),
-      titlefont = list(size = 18),
-      tickfont = list(size = 19),
+      titlefont = list(size = 14),
+      tickfont = list(size = 13),
       dtick = 2
     ),
     yaxis = list(
       title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
-      titlefont = list(size = 18),
-      tickfont = list(size = 19),
+      titlefont = list(size = 14),
+      tickfont = list(size = 13),
       range = c(0, upperlimit)
     ),
     paper_bgcolor = "#FFFFFF",
@@ -265,18 +265,18 @@ plot_ly(
   barmode = 'stack',
   legend = list(
     font = list(
-      size = 18
+      size = 12
       )
     ),
   xaxis = list(
-    titlefont = list(size = 18),
-    tickfont = list(size = 21),
+    titlefont = list(size = 14),
+    tickfont = list(size = 13),
     title = list(text='<b>Year of publication</b>', standoff = 20),
     dtick = 2
   ),
   yaxis = list(
-    titlefont = list(size = 18),
-    tickfont = list(size = 21),
+    titlefont = list(size = 14),
+    tickfont = list(size = 13),
     title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
     range = c(0, upperlimit)
   ),
