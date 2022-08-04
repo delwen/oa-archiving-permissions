@@ -6,6 +6,9 @@
 # data folder
 data/
 
+# figures
+figures/
+
 # download cache
 permissions_cache.sqlite
 
