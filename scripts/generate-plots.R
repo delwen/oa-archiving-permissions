@@ -9,7 +9,7 @@ library(ggplot2)
 data <- read_csv(here("data", "oa-merged-data.csv"))
 
 
-# Self-archiving permission for closed publications -----------------------
+# Self-archiving permission for closed publications (absolute) -----------------------
 # Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
 
 plot_data <- tribble(
@@ -63,7 +63,7 @@ for (year in unique(data$publication_year_unpaywall)) {
   
 ylabel <- "Paywalled publications"
   
-p <- plot_ly(
+a <- plot_ly(
   plot_data,
   x = ~year,
   y = ~percentage,
@@ -134,6 +134,74 @@ p <- plot_ly(
       plot_bgcolor = "#FFFFFF"
   )
 
+# Self-archiving permission for closed publications (percentage) ----------
+
+plot_data <- tribble(
+  ~year, ~percentage
+  )
+
+data_greenoa_perc <- data %>%
+  filter(
+    is_closed_archivable | color_green_only == "green",
+  )
+
+for (year in unique(data_greenoa_perc$publication_year_unpaywall)) {
+  
+  year_numer <- data_greenoa_perc %>%
+    filter(
+      color_green_only == "green",
+      publication_year_unpaywall == year
+    ) %>%
+    nrow()
+  
+  year_denom <- data_greenoa_perc %>%
+    filter(
+      publication_year_unpaywall == year
+      ) %>%
+    nrow()
+
+  plot_data <- plot_data %>%
+    bind_rows(
+      tribble(
+        ~year, ~percentage,
+        year, round(100*year_numer/year_denom, digits=1)
+        )
+    )
+}
+
+upperlimit <- 105
+ylabel <- "Archived publications (%)"
+
+p <- plot_ly(
+  plot_data,
+  x = ~year,
+  y = ~percentage,
+  name = "Archived",
+  type = 'bar',
+  marker = list(
+    color = "#007265",
+    line = list(
+      color = 'rgb(0,0,0)',
+      width = 1.5
+    )
+  )
+) %>%
+  layout(
+    xaxis = list(
+      title = list(text = '<b>Year of publication</b>', standoff = 20),
+      titlefont = list(size = 14),
+      tickfont = list(size = 13),
+      dtick = 2
+    ),
+    yaxis = list(
+      title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
+      range = c(0, upperlimit),
+      titlefont = list(size = 14),
+      tickfont = list(size = 13)
+      ),
+    paper_bgcolor = "#FFFFFF",
+    plot_bgcolor = "#FFFFFF"
+  )
 
 # Open Access status of all publications ----------------------------------
 # Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
