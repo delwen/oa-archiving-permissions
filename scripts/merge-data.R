@@ -35,6 +35,10 @@ oa_data <- oa_unpaywall %>%
       TRUE ~ NA
       ),
     is_closed_archivable = if_else(color != "closed", NA, is_archivable, missing = NA)
-    )
+    ) %>%
+
+  filter(
+    publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021"
+  )
 
 write_csv(oa_data, here("data", "oa-merged-data.csv"))
