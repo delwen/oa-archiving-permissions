@@ -6,7 +6,7 @@ library(here)
 
 # Prepare trial publications ----------------------------------------------------------
 
-intovalue_pubs_oa <- read_csv(here("data", "intovalue_pubs_oa.csv"))
+intovalue_pubs_oa <- read_csv(here("data", "intovalue-pubs-oa.csv"))
 
 pubs_raw <- intovalue_pubs_oa %>%
   group_by(doi) %>%
