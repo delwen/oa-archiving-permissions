@@ -13,22 +13,22 @@ library(unpaywallR)
 # Read in processed IntoValue dataset
 intovalue <- rio::import("https://github.com/maia-sh/intovalue-data/blob/main/data/processed/trials.rds?raw=true")
 
-# Apply IntoValue exclusion criteria
-intovalue <- intovalue %>%
+# Apply IntoValue exclusion criteria and select publications
+intovalue_pubs <- intovalue %>%
   filter(
     iv_completion,
     iv_status,
     iv_interventional,
     has_german_umc_lead,
+    has_publication,
     
     # In case of duplicate trials, exclude IV1 version
     !(is_dupe & iv_version == 1)
-    )
+    ) 
 
-# Filter for trials with a publication with a DOI, keep only unique DOIs
-intovalue_dois <- intovalue %>%
+# Create vector of unique DOIs for the Unpaywall query
+intovalue_dois <- intovalue_pubs %>%
   filter(
-    has_publication,
     !is.na(doi)
   ) %>%
   distinct(doi) %>%
@@ -116,30 +116,34 @@ oa_results_green_only <-
   ) %>%
   select(doi, color_green_only = OA_color)
 
-# Save Unpaywall data -----------------------------------------------------
+# Process and save Unpaywall data -----------------------------------------------------
 
 oa_unpaywall <-
   full_join(oa_results_green_only, oa_results_green, by = "doi") %>%
   full_join(oa_results, by = "doi") %>%
   mutate(across(everything(), ~na_if(., "")))
 
-# Explore Unpaywall data --------------------------------------------------
+# Add variable for publication year
+oa_unpaywall$publication_year_unpaywall <- as.Date(oa_unpaywall$publication_date_unpaywall) %>%
+  format("%Y")
 
+# Explore Unpaywall data
 unresolved_dois <- oa_unpaywall %>%
   filter(is.na(color))
 print(paste("Unpaywall unresolved DOIs:", nrow(unresolved_dois)))
 
-# Keep only publications published in 2010 - 2020
+write_csv(oa_unpaywall, here("data", "oa-unpaywall.csv"))
 
-oa_unpaywall$publication_year_unpaywall <- as.Date(oa_unpaywall$publication_date_unpaywall) %>%
-  format("%Y")
 
-oa_unpaywall <- oa_unpaywall %>%
-  filter(
-    publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021"
+# Merge initial data with OA data for pub screening flowchart -----------------
+
+intovalue_pubs_oa <- intovalue_pubs %>%
+  select(id, doi) %>%
+  left_join(
+  oa_unpaywall, by = "doi"
   )
 
-write_csv(oa_unpaywall, here("data", "oa-unpaywall.csv"))
+write_csv(intovalue_pubs_oa, here("data", "intovalue-pubs-oa.csv"))
 
 
 # Log query date ----------------------------------------------------------
