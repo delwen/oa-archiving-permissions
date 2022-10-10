@@ -353,6 +353,149 @@ plot_ly(
 )
 
 
+# Open Access status of all publications (percentage) ----------------------------------
+# Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
+
+plot_data <- tribble(
+  ~x_label, ~gold, ~hybrid, ~bronze, ~green, ~closed
+)
+
+for (year in unique(data$publication_year_unpaywall)) {
+  
+  gold_num <- data %>%
+    filter(
+      publication_year_unpaywall == year,
+      color == "gold"
+    ) %>%
+    nrow()
+  
+  hybrid_num <- data %>%
+    filter(
+      publication_year_unpaywall == year,
+      color == "hybrid"
+    ) %>%
+    nrow()
+  
+  bronze_num <- data %>%
+    filter(
+      publication_year_unpaywall == year,
+      color == "bronze"
+    ) %>%
+    nrow()
+  
+  green_num <- data %>%
+    filter(
+      publication_year_unpaywall == year,
+      color == "green"
+    ) %>%
+    nrow()
+  
+  closed_num <- data %>%
+    filter(
+      publication_year_unpaywall == year,
+      color == "closed"
+    ) %>%
+    nrow()
+  
+  year_denom <- data %>%
+    filter(
+      publication_year_unpaywall == year
+    ) %>%
+    nrow()
+  
+  plot_data <- plot_data %>%
+    bind_rows(
+      tribble(
+        ~x_label, ~gold, ~hybrid, ~bronze, ~green, ~closed,   
+        year, round(100*gold_num/year_denom, digits=1), round(100*hybrid_num/year_denom, digits=1), round(100*bronze_num/year_denom, digits=1), round(100*green_num/year_denom, digits=1), round(100*closed_num/year_denom, digits=1)
+      )
+    )
+}
+
+ylabel <- "Percentage publications (%)"
+
+plot_ly(
+  plot_data,
+  x = ~x_label,
+  y = ~gold,
+  name = "Gold",
+  type = 'bar',
+  marker = list(
+    color = "#F1BA50",
+    line = list(
+      color = 'rgb(0,0,0)',
+      width = 1.5
+    )
+  )
+) %>%
+  add_trace(
+    y = ~hybrid,
+    name = "Hybrid",
+    marker = list(
+      color = "#634587",
+      line = list(
+        color = 'rgb(0,0,0)',
+        width = 1.5
+      )
+    )
+  ) %>%
+  add_trace(
+    y = ~bronze,
+    name = "Bronze",
+    marker = list(
+      color = "#cf9188",
+      line = list(
+        color = 'rgb(0,0,0)',
+        width = 1.5
+      )
+    )
+  ) %>%
+  add_trace(
+    y = ~green,
+    name = "Green",
+    marker = list(
+      color = "#007265",
+      line = list(
+        color = 'rgb(0,0,0)',
+        width = 1.5
+      )
+    )
+  ) %>%
+  add_trace(
+    y = ~closed,
+    name = "Paywalled",
+    marker = list(
+      color = "#B6B6B6",
+      line = list(
+        color = 'rgb(0,0,0)',
+        width = 1.5
+      )
+    )
+  ) %>%
+  layout(
+    #title = "Open Access status of publications",
+    barmode = 'stack',
+    legend = list(
+      font = list(
+        size = 12
+      )
+    ),
+    xaxis = list(
+      titlefont = list(size = 14),
+      tickfont = list(size = 13),
+      title = list(text='<b>Year of publication</b>', standoff = 20),
+      dtick = 2
+    ),
+    yaxis = list(
+      titlefont = list(size = 14),
+      tickfont = list(size = 13),
+      title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
+      range = c(0, 110)
+    ),
+    paper_bgcolor = "#FFFFFF",
+    plot_bgcolor = "#FFFFFF"
+  )
+
 # Self-archiving permissions for publications without green version -------
 
 results <- data %>%
