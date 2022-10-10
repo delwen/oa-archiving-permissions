@@ -18,6 +18,7 @@ pubs_raw <- pubs_raw %>%
     has_doi = if_else(!is.na(doi), TRUE, FALSE),
     is_unique_doi = if_else(!is_dupe_doi, TRUE, FALSE),
     is_resolved_unpaywall = if_else(!is.na(doi) & !is.na(color), TRUE, FALSE),
+    is_journal_article = if_else(!is.na(journal), TRUE, FALSE),
     is_published_2010_2020 = if_else(publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021", TRUE, FALSE)
   )
 
@@ -67,6 +68,7 @@ screening_criteria <- c(
   "has_doi",
   "is_unique_doi",
   "is_resolved_unpaywall",
+  "is_journal_article",
   "is_published_2010_2020"
 )
 
@@ -94,6 +96,8 @@ n_pubs_deduped <- report_n(pubs_screening, "is_unique_doi", TRUE)
 n_pubs_deduped_ex <- report_n(pubs_screening, "is_unique_doi", FALSE)
 n_pubs_resolved <- report_n(pubs_screening, "is_resolved_unpaywall", TRUE)
 n_pubs_resolved_ex <- report_n(pubs_screening, "is_resolved_unpaywall", FALSE)
+n_pubs_journal_article <- report_n(pubs_screening, "is_journal_article", TRUE)
+n_pubs_journal_article_ex <- report_n(pubs_screening, "is_journal_article", FALSE)
 n_pubs_2010_2020 <- report_n(pubs_screening, "is_published_2010_2020", TRUE)
 n_pubs_2010_2020_ex <- report_n(pubs_screening, "is_published_2010_2020", FALSE)
 
