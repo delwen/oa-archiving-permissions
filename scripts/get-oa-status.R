@@ -70,13 +70,13 @@ oa_raw <-
     clusters = 2
   )
 
-# Get color based on hierarchy: journal > repository (except bronze) ------
+# Get color based on hierarchy: journal > repository ------
 
 hierarchy <-
   c("gold",
     "hybrid",
-    "green",
     "bronze",
+    "green",
     "closed")
 
 oa_results <-
@@ -102,27 +102,10 @@ oa_results_green <-
   ) %>%
   select(doi, color_green = OA_color)
 
-# Get color based on hierarchy: all OA routes > green OA ------
-
-hierarchy_green_only <-
-  c("gold",
-    "hybrid",
-    "bronze",
-    "green",
-    "closed")
-
-oa_results_green_only <-
-  unpaywallR::dois_OA_pick_color(
-    oa_raw,
-    hierarchy_green_only
-  ) %>%
-  select(doi, color_green_only = OA_color)
-
 # Process and save Unpaywall data -----------------------------------------------------
 
 oa_unpaywall <-
-  full_join(oa_results_green_only, oa_results_green, by = "doi") %>%
-  full_join(oa_results, by = "doi") %>%
+  full_join(oa_results, oa_results_green, by = "doi") %>%
   mutate(across(everything(), ~na_if(., "")))
 
 # Add variable for publication year
