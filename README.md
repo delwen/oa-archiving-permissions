@@ -1,4 +1,5 @@
 # oa-archiving-permissions
+
 Get article-level self-archiving permissions
 of publications based on the
 [ShareYourPaper API](https://openaccessbutton.org/api)
@@ -55,3 +56,10 @@ dataset can be found in
 ```
 sample-data/oa-syp-permissions.csv
 ```
+
+### Example use case
+This code was used to assess the potential of self-archiving to increase the
+discoverability of a cohort of clinical trial publications. This example use
+case is available as a preprint: [coming soon]. The code associated with this
+project can be found in the `oa-trials-paper` branch of this repository. The
+data generated in this project can be found in [Zenodo](https://doi.org/10.5281/zenodo.7154254).
