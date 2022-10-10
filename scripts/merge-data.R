@@ -39,6 +39,11 @@ oa_data <- oa_unpaywall %>%
 
   filter(
     publication_year_unpaywall > "2009" & publication_year_unpaywall < "2021"
-  )
+  ) %>%
+  
+  # Remove publications for which the DOI points to the pre-print
+  filter(
+    !is.na(journal_unpaywall)
+    )
 
 write_csv(oa_data, here("data", "oa-merged-data.csv"))
