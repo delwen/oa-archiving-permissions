@@ -528,12 +528,12 @@ o <- ggplot(data = results, aes(x = publications, y = count)) +
 
 print(o)
 dev.off()
+
 # Bar plot of embargo periods ------------------------------------------
 
 embargo_distribution <- data %>%
   filter(
-    color == "closed",
-    syp_response == "response"
+    is_closed_archivable
     ) %>%
   count(
     embargo
@@ -545,8 +545,9 @@ e <- ggplot(
   embargo_distribution,
   aes(x = embargo, y=number)) + 
   geom_bar(stat = "identity") +
-  geom_text(aes(label = number), color = "black", size = 3, vjust = -0.5) +
-  ylim(0,700) +
-  theme_classic()
+  geom_text(aes(label = number), color = "black", size = 3.5, vjust = -0.5) +
+  ylim(0,800) +
+  labs(y= "Paywalled publications", x = "Embargo length (months)") +
+  theme(axis.text = element_text(size = 10))
 e
 
