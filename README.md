@@ -57,7 +57,7 @@ dataset can be found in
 sample-data/oa-syp-permissions.csv
 ```
 
-### Example use case
+## Example use case
 This code was used to assess the potential of self-archiving to increase the
 discoverability of a cohort of clinical trial publications. This example use
 case is available as a preprint: [coming soon]. The code associated with this
