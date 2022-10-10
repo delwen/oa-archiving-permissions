@@ -13,6 +13,8 @@ library(unpaywallR)
 # Read in processed IntoValue dataset
 intovalue <- rio::import("https://github.com/maia-sh/intovalue-data/blob/main/data/processed/trials.rds?raw=true")
 
+write_csv(intovalue, here("data", "intovalue.csv"))
+
 # Apply IntoValue exclusion criteria and select publications
 intovalue_pubs <- intovalue %>%
   filter(
