@@ -61,7 +61,7 @@ for (year in unique(data$publication_year_unpaywall)) {
     upperlimit <- max(year_upperlimit, upperlimit)
   }
   
-ylabel <- "Paywalled publications"
+ylabel <- "Closed-access publications"
   
 a <- plot_ly(
   plot_data,
@@ -79,7 +79,7 @@ a <- plot_ly(
 ) %>%
   add_trace(
     y = ~can_archive,
-    name = "Can archive",
+    name = "Permission found",
     marker = list(
       color = "#539d66",
         line = list(
@@ -90,7 +90,7 @@ a <- plot_ly(
   ) %>% 
   add_trace(
     y = ~cant_archive,
-    name = "Can't archive",
+    name = "Permission not found",
     marker = list(
       color = "#ab880c",
         line = list(
@@ -101,7 +101,7 @@ a <- plot_ly(
   ) %>%
   add_trace(
     y = ~no_data,
-    name = "No data",
+    name = "Unclear based on criteria",
     marker = list(
       color = "#20303b",
         line = list(
