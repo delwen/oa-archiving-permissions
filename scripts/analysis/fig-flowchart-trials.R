@@ -70,7 +70,7 @@ rm(list = ls(pattern = "^label_"))
 flow_trials %>%
   DiagrammeRsvg::export_svg() %>%
   charToRaw() %>%
-  rsvg::rsvg_pdf("flow-trials.pdf"
+  rsvg::rsvg_pdf(here("figures", "flow-trials.pdf")
                  #width = 297.5,
                  #height = 463
   )
