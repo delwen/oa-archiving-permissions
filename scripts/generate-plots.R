@@ -22,7 +22,7 @@ for (year in unique(data$publication_year_unpaywall)) {
     
   all_archived <- data %>%
     filter(
-      color_green_only == "green",
+      color == "green",
       publication_year_unpaywall == year
     ) %>%
     nrow()
@@ -142,14 +142,14 @@ plot_data <- tribble(
 
 data_greenoa_perc <- data %>%
   filter(
-    is_closed_archivable | color_green_only == "green",
+    is_closed_archivable | color == "green",
   )
 
 for (year in unique(data_greenoa_perc$publication_year_unpaywall)) {
   
   year_numer <- data_greenoa_perc %>%
     filter(
-      color_green_only == "green",
+      color == "green",
       publication_year_unpaywall == year
     ) %>%
     nrow()
