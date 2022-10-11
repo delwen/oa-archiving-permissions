@@ -58,8 +58,11 @@ sample-data/oa-syp-permissions.csv
 ```
 
 ## Example use case
-This code was used to assess the potential of self-archiving to increase the
-discoverability of a cohort of clinical trial publications. This example use
-case is available as a preprint: [coming soon]. The code associated with this
-project can be found in the `oa-trials-paper` branch of this repository. The
-data generated in this project can be found in [Zenodo](https://doi.org/10.5281/zenodo.7154254).
+
+### Leveraging open tools to realize the potential of self-archiving: A cohort study in clinical trials
+
+The code in this repository was used to assess the potential of self-archiving
+to increase the discoverability of a cohort of clinical trial publications. This
+example use case is described in more detail in this preprint: *[coming soon]*.
+The code associated with this project can be found in the `oa-trials-paper`
+branch of this repository. The data generated in this project can be found in [Zenodo](https://doi.org/10.5281/zenodo.7154254).
