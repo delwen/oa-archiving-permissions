@@ -1,68 +1,46 @@
-# oa-archiving-permissions
+# Example case: Leveraging open tools to realize the potential of self-archiving: A cohort study in clinical trials
 
-Get article-level self-archiving permissions
-of publications based on the
-[ShareYourPaper API](https://openaccessbutton.org/api)
-([OA.Works](https://oa.works)).
+## Overview
 
-### Overview
-This script can be used to query the ShareYourPaper
-API to obtain self-archiving permissions of
-publications. The script takes as input a list of
-DOIs and returns several variables of interest
-based on the "best permission" in the ShareYourPaper
-permissions database
-(see more information [here](https://shareyourpaper.org/permissions#learnmore)).
+The code described in this repository was used to assess the potential of
+self-archiving to increase the discoverability of clinical trial publications.
+This example use case is described in more detail in this preprint:
+*[coming soon]*. The code associated with this example use case can be found in
+this branch. The data generated in this project is openly available in [Zenodo](https://doi.org/10.5281/zenodo.7154254).
 
-### Data dictionary
-Running the script generates the following variables:
+## Description
 
-|name|type|description|
-|---|---|---|
-|syp_response|string|Response flag; either 'unresolved' (DOI not resolved), 'no_best_permission' (no best permission in API response), 'no_embargo' (no embargo in API response), or 'response' (DOI resolved and best permission found)|
-|can_archive|boolean|Can the publication be archived in any way? Derived from `can_archive` in API response (best permission)|
-|archiving_locations|string|Where can the publication be archived? Derived from `locations` in API response (best permission)|
-|inst_repository|boolean|Can the publication be archived in an institutional repository? True if 'institutional repository' in `locations` in API response (best permission)|
-|versions|string|What version of the publication can be archived? Derived from `versions` in API response (best permission)|
-|submitted_version|boolean|Can the submitted version of the publication be self-archived? True if 'submittedVersion' in `versions` (best permission)|
-|accepted_version|boolean|Can the accepted version of the publication be self-archived? True if 'acceptedVersion' in `versions` (best permission)|
-|published_version|boolean|Can the published version of the publication be self-archived? True if 'publishedVersion' in `versions` (best permission)|
-|licenses_required|string|License required to be applied to the publication. Derived from `licences` in API response (best permission)|
-|permission_issuer|string|Institution issuing the permission. Derived from `issuer` in API response (best permission) |
-|embargo|float|Embargo applied to best permission. Derived from `embargo_months` in API response (best permission)|
-|date_embargo_elapsed|string|Date at which the embargo elapses. Derived from `embargo_end` in API response (best permission)|
-|is_embargo_elapsed|boolean|Has the embargo elapsed by the query date? Calculated by comparing `date_embargo_elapsed` and query date|
-|permission_accepted|boolean|Can the accepted version of the publication be self-archived in an institutional repository? True if `can_archive`, `inst_repository`, `is_embargo_elapsed`, and `accepted_version` are True|
-|permission_published|boolean|Can the published version of the publication be self-archived in an institutional repository? True if `can_archive`, `inst_repository`, `is_embargo_elapsed`, and `published_version` are True|
+This example use case builds on a cohort of clinical trials and associated
+publications, referred to as the **IntoValue dataset**. The IntoValue dataset is
+actively maintained in this [repository](https://github.com/maia-sh/intovalue-data).
+It consists of interventional clinical trials registered in ClinicalTrials.gov
+or the German Clinical Trials Register (DRKS), conducted at a German university
+medical center, and reported as complete on the registry between 2009 – 2017. The
+earliest results publications associated with these trials were found through
+manual searches.
 
-### Requirements
-The requirements for this project are listed in
-the `requirements.txt` file (tested with versions
-found in `requirements_vers.txt`).
+This example use case addresses the following questions in this cohort:
+- How many clinical trial results publications are openly accessible?*
+- For articles behind a paywall, what is the potential of self-archiving to
+increase access?
 
-### Run script
-To run on a sample dataset, execute the following command:
-```
-$ python3 scripts/get-oa-permissions.py --config config-sample.ini
-```
-This will run the script on a sample dataset. This
-dataset contains 20 DOIs and additional data from
-Unpaywall:
-```
-sample-data/oa-unpaywall.csv
-```
-The output of running the script on this
-dataset can be found in
-```
-sample-data/oa-syp-permissions.csv
-```
+**The following definition of Open Access (OA) was used: articles that are*
+*free-to-read online in a journal or OA repository.*
 
-## Example use case
+## Workflow
 
-### Leveraging open tools to realize the potential of self-archiving: A cohort study in clinical trials
+All the relevant scripts to reproduce the results can be found in the `scripts`
+folder:
 
-The code in this repository was used to assess the potential of self-archiving
-to increase the discoverability of a cohort of clinical trial publications. This
-example use case is described in more detail in this preprint: *[coming soon]*.
-The code associated with this project can be found in the `oa-trials-paper`
-branch of this repository. The data generated in this project can be found in [Zenodo](https://doi.org/10.5281/zenodo.7154254).
+1) `get-oa-status.R`: download the IntoValue dataset and apply the inclusion and
+exclusion criteria. Then, query Unpaywall via its API to get the OA status of
+publications in the cohort. To account for multiple OA locations, the following
+hierarchy is used: gold > hybrid > bronze > green > closed.
+2) `get-oa-permissions.py`: query Shareyourpaper via its API to get the 'best
+permission' of the publications in the cohort. The script also defines whether
+a permission was found based on pre-determined criteria.
+3) `merge-data.R`: merge the results from Unpaywall and Shareyourpaper API
+queries.
+
+The `analysis` folder contains the scripts to generate the trial screening
+flowchart and the publication screening flowchart.
