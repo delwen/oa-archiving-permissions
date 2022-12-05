@@ -10,526 +10,99 @@ data <- read_csv(here("data", "oa-merged-data.csv"))
 
 
 # Self-archiving permission for closed publications (absolute) -----------------------
-# Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
 
-plot_data <- tribble(
-  ~year, ~percentage, ~can_archive,   ~cant_archive,    ~no_data
-  )
-  
-upperlimit <- 0
-  
-for (year in unique(data$publication_year_unpaywall)) {
-    
-  all_archived <- data %>%
-    filter(
-      color == "green",
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  all_can_archive <- data %>%
-    filter(
-      is_closed_archivable == TRUE,
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  all_cant_archive <- data %>%
-    filter(
-      is_closed_archivable == FALSE,
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  all_no_data <- data %>%
-    filter(
-      color == "closed",
-      is.na(is_closed_archivable),
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  plot_data <- plot_data %>%
-    bind_rows(
-      tribble(
-        ~year, ~percentage, ~can_archive,   ~cant_archive,    ~no_data,
-        year, all_archived, all_can_archive, all_cant_archive, all_no_data
-      )
-    )
-    
-    year_upperlimit <- 1.1 * sum(all_archived, all_can_archive, all_cant_archive, all_no_data)
-    upperlimit <- max(year_upperlimit, upperlimit)
-  }
-  
-ylabel <- "Closed-access publications"
-  
-a <- plot_ly(
-  plot_data,
-  x = ~year,
-  y = ~percentage,
-  name = "Archived",
-  type = 'bar',
-  marker = list(
-    color = "#007265",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-  )
-) %>%
-  add_trace(
-    y = ~can_archive,
-    name = "Permission found",
-    marker = list(
-      color = "#539d66",
-        line = list(
-          color = 'rgb(0,0,0)',
-          width = 1.5
-        )
-    )
-  ) %>% 
-  add_trace(
-    y = ~cant_archive,
-    name = "Permission not found",
-    marker = list(
-      color = "#ab880c",
-        line = list(
-          color = 'rgb(0,0,0)',
-          width = 1.5
-        )
-    )
-  ) %>%
-  add_trace(
-    y = ~no_data,
-    name = "Unclear based on criteria",
-    marker = list(
-      color = "#20303b",
-        line = list(
-          color = 'rgb(0,0,0)',
-          width = 1.5
-        )
-    )
-  ) %>%
-  layout(
-    #title = "Realised potential of green OA for paywalled publications",
-    barmode = 'stack',
-    legend = list(
-      font = list(
-        size = 12
-      )
-    ),
-    xaxis = list(
-      title = list(text = '<b>Year of publication</b>', standoff = 20),
-      titlefont = list(size = 14),
-      tickfont = list(size = 13),
-      dtick = 2
-    ),
-    yaxis = list(
-      title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
-      titlefont = list(size = 14),
-      tickfont = list(size = 13),
-      range = c(0, upperlimit)
-    ),
-    paper_bgcolor = "#FFFFFF",
-      plot_bgcolor = "#FFFFFF"
-  )
-
-# Self-archiving permission for closed publications (percentage) ----------
-
-plot_data <- tribble(
-  ~year, ~percentage
-  )
-
-data_greenoa_perc <- data %>%
+archiving_plot <- data %>% 
   filter(
-    is_closed_archivable | color == "green",
+    color == "closed" | color == "green"
+    ) %>%
+  mutate(
+    status = case_when(
+      color == "green" ~ "archived",
+      is_closed_archivable == TRUE ~ "permission_found",
+      is_closed_archivable == FALSE ~ "permission_not_found",
+      color == "closed" & is.na(is_archivable) ~ "no_data"
+      )
+  ) %>%
+  select(
+    doi,
+    color,
+    is_closed_archivable,
+    status,
+    publication_year_unpaywall
   )
 
-for (year in unique(data_greenoa_perc$publication_year_unpaywall)) {
-  
-  year_numer <- data_greenoa_perc %>%
-    filter(
-      color == "green",
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  year_denom <- data_greenoa_perc %>%
-    filter(
-      publication_year_unpaywall == year
-      ) %>%
-    nrow()
+archiving_plot <- archiving_plot %>% 
+  count(status, publication_year_unpaywall) %>%
+  arrange(publication_year_unpaywall)
 
-  plot_data <- plot_data %>%
-    bind_rows(
-      tribble(
-        ~year, ~percentage,
-        year, round(100*year_numer/year_denom, digits=1)
-        )
-    )
-}
+archiving_plot$status <- factor(archiving_plot$status, levels = c("no_data",
+                                                    "permission_not_found",
+                                                    "permission_found",
+                                                    "archived"
+                                                    ))
 
-upperlimit <- 105
-ylabel <- "Archived publications (%)"
+levels(archiving_plot$status) <- list("Unclear" = "no_data",
+                              "Permission not found" = "permission_not_found",
+                              "Permission found" = "permission_found",
+                              "Archived" = "archived"
+                              )
 
-p <- plot_ly(
-  plot_data,
-  x = ~year,
-  y = ~percentage,
-  name = "Archived",
-  type = 'bar',
-  marker = list(
-    color = "#007265",
-    line = list(
-      color = 'rgb(0,0,0)',
-      width = 1.5
-    )
-  )
-) %>%
-  layout(
-    xaxis = list(
-      title = list(text = '<b>Year of publication</b>', standoff = 20),
-      titlefont = list(size = 14),
-      tickfont = list(size = 13),
-      dtick = 2
-    ),
-    yaxis = list(
-      title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
-      range = c(0, upperlimit),
-      titlefont = list(size = 14),
-      tickfont = list(size = 13)
-      ),
-    paper_bgcolor = "#FFFFFF",
-    plot_bgcolor = "#FFFFFF"
-  )
+archiving_plot$publication_year_unpaywall <- factor(archiving_plot$publication_year_unpaywall)
 
-# Open Access status of all publications ----------------------------------
-# Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
 
-plot_data <- tribble(
-  ~x_label, ~gold,    ~green,    ~hybrid,   ~closed,    ~bronze
-)
+t <- ggplot(archiving_plot, aes(fill=status, y=n, x=publication_year_unpaywall)) + 
+  geom_bar(position="stack", stat="identity", color="black") +
+  scale_x_discrete(breaks = seq(from = 2010, to = 2020, by = 2)) +
+  scale_fill_manual(values=c('#20303b', '#ab880c', '#539d66', '#007265'), name=NULL) +
+  xlab("Year of publication") +
+  ylab("Closed-access publications") +
+  ylim(0,160) +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(color = "black",
+                                    size = 0.3,
+                                    linetype = 3)) +
+  theme(axis.text = element_text(size = 10)) +
+  theme(axis.title = element_text(size = 12, face = "bold"))
 
-upperlimit <- 0
-
-for (year in unique(data$publication_year_unpaywall)) {
-  
-  gold_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "gold"
-    ) %>%
-    nrow()
-  
-  green_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "green"
-    ) %>%
-    nrow()
-  
-  hybrid_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "hybrid"
-    ) %>%
-    nrow()
-  
-  closed_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "closed"
-    ) %>%
-    nrow()
-  
-  bronze_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "bronze"
-    ) %>%
-    nrow()
-  
-  year_denom <- data %>%
-    filter(
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-    plot_data <- plot_data %>%
-      bind_rows(
-        tribble(
-          ~x_label, ~gold,    ~green,    ~hybrid,   ~closed,    ~bronze,
-          year, gold_num, green_num, hybrid_num, closed_num, bronze_num
-        )
-      )
-  
-  year_upperlimit <- 1.1*year_denom
-  upperlimit <- max(year_upperlimit, upperlimit)
-  
-}
-
-ylabel <- "Publications"
-
-plot_ly(
-  plot_data,
-  x = ~x_label,
-  y = ~gold,
-  name = "Gold",
-  type = 'bar',
-  marker = list(
-    color = "#F1BA50",
-    line = list(
-      color = 'rgb(0,0,0)',
-      width = 1.5
-    )
-  )
-) %>%
-  add_trace(
-    y = ~green,
-    name = "Green",
-    marker = list(
-      color = "#007265",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~hybrid,
-    name = "Hybrid",
-    marker = list(
-      color = "#634587",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~bronze,
-    name = "Bronze",
-    marker = list(
-      color = "#cf9188",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~closed,
-    name = "Paywalled",
-    marker = list(
-      color = "#B6B6B6",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  layout(
-    #title = "Open Access status of publications",
-  barmode = 'stack',
-  legend = list(
-    font = list(
-      size = 12
-      )
-    ),
-  xaxis = list(
-    titlefont = list(size = 14),
-    tickfont = list(size = 13),
-    title = list(text='<b>Year of publication</b>', standoff = 20),
-    dtick = 2
-  ),
-  yaxis = list(
-    titlefont = list(size = 14),
-    tickfont = list(size = 13),
-    title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
-    range = c(0, upperlimit)
-  ),
-  paper_bgcolor = "#FFFFFF",
-  plot_bgcolor = "#FFFFFF"
-)
+ggsave(here("figures", "archiving-status.png"), t, height = 5, width = 7, dpi = 320)
 
 
 # Open Access status of all publications (percentage) ----------------------------------
-# Adapted from Benjamin Gregory Carlisle (https://github.com/quest-bih/clinical-dashboard)
 
-plot_data <- tribble(
-  ~x_label, ~gold, ~hybrid, ~bronze, ~green, ~closed
-)
+oa_plot <- data %>% select(doi,
+                           color,
+                           publication_year_unpaywall
+                           )
 
-for (year in unique(data$publication_year_unpaywall)) {
-  
-  gold_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "gold"
-    ) %>%
-    nrow()
-  
-  hybrid_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "hybrid"
-    ) %>%
-    nrow()
-  
-  bronze_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "bronze"
-    ) %>%
-    nrow()
-  
-  green_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "green"
-    ) %>%
-    nrow()
-  
-  closed_num <- data %>%
-    filter(
-      publication_year_unpaywall == year,
-      color == "closed"
-    ) %>%
-    nrow()
-  
-  year_denom <- data %>%
-    filter(
-      publication_year_unpaywall == year
-    ) %>%
-    nrow()
-  
-  plot_data <- plot_data %>%
-    bind_rows(
-      tribble(
-        ~x_label, ~gold, ~hybrid, ~bronze, ~green, ~closed,   
-        year, round(100*gold_num/year_denom, digits=1), round(100*hybrid_num/year_denom, digits=1), round(100*bronze_num/year_denom, digits=1), round(100*green_num/year_denom, digits=1), round(100*closed_num/year_denom, digits=1)
-      )
-    )
-}
+oa_plot <- oa_plot %>% 
+  count(color, publication_year_unpaywall) %>%
+  arrange(publication_year_unpaywall)
 
-ylabel <- "Percentage publications (%)"
+oa_plot$color <- factor(oa_plot$color, levels = c("closed", "green", "bronze", "hybrid", "gold"))
 
-plot_ly(
-  plot_data,
-  x = ~x_label,
-  y = ~gold,
-  name = "Gold",
-  type = 'bar',
-  marker = list(
-    color = "#F1BA50",
-    line = list(
-      color = 'rgb(0,0,0)',
-      width = 1.5
-    )
-  )
-) %>%
-  add_trace(
-    y = ~hybrid,
-    name = "Hybrid",
-    marker = list(
-      color = "#634587",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~bronze,
-    name = "Bronze",
-    marker = list(
-      color = "#cf9188",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~green,
-    name = "Green",
-    marker = list(
-      color = "#007265",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  add_trace(
-    y = ~closed,
-    name = "Paywalled",
-    marker = list(
-      color = "#B6B6B6",
-      line = list(
-        color = 'rgb(0,0,0)',
-        width = 1.5
-      )
-    )
-  ) %>%
-  layout(
-    #title = "Open Access status of publications",
-    barmode = 'stack',
-    legend = list(
-      font = list(
-        size = 12
-      )
-    ),
-    xaxis = list(
-      titlefont = list(size = 14),
-      tickfont = list(size = 13),
-      title = list(text='<b>Year of publication</b>', standoff = 20),
-      dtick = 2
-    ),
-    yaxis = list(
-      titlefont = list(size = 14),
-      tickfont = list(size = 13),
-      title = list(text = paste('<b>', ylabel, '</b>'), standoff = 20),
-      range = c(0, 110)
-    ),
-    paper_bgcolor = "#FFFFFF",
-    plot_bgcolor = "#FFFFFF"
-  )
+levels(oa_plot$color) <- list(Paywalled = "closed",
+                              Green = "green",
+                              Bronze = "bronze",
+                              Hybrid = "hybrid",
+                              Gold = "gold")
 
-# Self-archiving permissions for publications without green version -------
+oa_plot$publication_year_unpaywall <- factor(oa_plot$publication_year_unpaywall)
 
-results <- data %>%
-  filter(color_green != "green") %>%
-  rename(permission = is_archivable) %>%
-  mutate(permission = ifelse(permission, "yes", "no")) %>%
-  mutate(permission = ifelse(is.na(permission), "no data", permission)) %>%
-  count(permission) %>%
-  rename(count = n) %>%
-  arrange(desc(count)) %>%
-  mutate(lab_ypos = cumsum(count) - 0.5 * count) %>%
-  mutate(publications = "")
+p <- ggplot(oa_plot, aes(fill=color, y=n, x=publication_year_unpaywall)) + 
+  geom_bar(position="fill", stat="identity", color="black") +
+  scale_x_discrete(breaks = seq(from = 2010, to = 2020, by = 2)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values=c('#B6B6B6', '#007265', '#cf9188', '#634587', '#F1BA50'), name=NULL) +
+  xlab("Year of publication") +
+  ylab("Percentage publications (%)") +
+  theme_classic() +
+  theme(axis.text=element_text(size=10)) +
+  theme(axis.title = element_text(size = 12, face = "bold"))
 
-png(here("data", "permissions.png"),
-    width = 5,
-    height = 4,
-    units = 'in',
-    res = 300)
+ggsave(here("figures", "oa-status.png"), p, height = 5, width = 7, dpi = 320)
 
-first <- "#56B870"
-second <- "#137177"
-third <- "#0A2F51"
 
-o <- ggplot(data = results, aes(x = publications, y = count)) + 
-  geom_col(aes(fill = permission), width = 0.5, alpha = 0.8) +
-  ggtitle("Permission to archive the postprint or published version") +
-  geom_text(aes(y = lab_ypos, label = round(count, digits = 1), group=permission), color = "white") +
-  ylab("Publications") + xlab("") +
-  scale_fill_manual(values = c(third, second, first))
-
-print(o)
-dev.off()
-
-# Bar plot of embargo periods ------------------------------------------
+# Bar plot of embargo periods --------------------------------------------------
 
 embargo_distribution <- data %>%
   filter(
@@ -548,6 +121,11 @@ e <- ggplot(
   geom_text(aes(label = number), color = "black", size = 3.5, vjust = -0.5) +
   ylim(0,800) +
   labs(y= "Paywalled publications", x = "Embargo length (months)") +
-  theme(axis.text = element_text(size = 10))
-e
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(color = "black",
+                                          size = 0.1,
+                                          linetype = 3)) +
+  theme(axis.text = element_text(size = 10)) +
+  theme(axis.title = element_text(size = 12, face = "bold"))
 
+ggsave(here("figures", "embargo.png"), e, height = 5, width = 7, dpi = 320)
