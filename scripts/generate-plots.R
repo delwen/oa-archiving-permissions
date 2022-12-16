@@ -64,7 +64,7 @@ t <- ggplot(archiving_plot, aes(fill=status, y=n, x=publication_year_unpaywall))
   theme(axis.text = element_text(size = 10)) +
   theme(axis.title = element_text(size = 12, face = "bold"))
 
-ggsave(here("figures", "archiving-status.png"), t, height = 5, width = 7, dpi = 320)
+ggsave(here("figures", "archiving-status.tiff"), t, height = 5, width = 7, dpi = 320)
 
 
 # Open Access status of all publications (percentage) ----------------------------------
@@ -99,7 +99,7 @@ p <- ggplot(oa_plot, aes(fill=color, y=n, x=publication_year_unpaywall)) +
   theme(axis.text=element_text(size=10)) +
   theme(axis.title = element_text(size = 12, face = "bold"))
 
-ggsave(here("figures", "oa-status.png"), p, height = 5, width = 7, dpi = 320)
+ggsave(here("figures", "oa-status.tiff"), p, height = 5, width = 7, dpi = 320)
 
 
 # Bar plot of embargo periods --------------------------------------------------
@@ -128,4 +128,4 @@ e <- ggplot(
   theme(axis.text = element_text(size = 10)) +
   theme(axis.title = element_text(size = 12, face = "bold"))
 
-ggsave(here("figures", "embargo.png"), e, height = 5, width = 7, dpi = 320)
+ggsave(here("figures", "embargo.tiff"), e, height = 5, width = 7, dpi = 320)
