@@ -66,11 +66,9 @@ blank_3 -> trials_dupes_ex
 rm(list = ls(pattern = "^label_"))
 
 
-# Export PDF
+# Export EPS
 flow_trials %>%
   DiagrammeRsvg::export_svg() %>%
   charToRaw() %>%
-  rsvg::rsvg_pdf(here("figures", "flow-trials.pdf")
-                 #width = 297.5,
-                 #height = 463
+  rsvg::rsvg_eps(here("figures", "flow-trials.eps")
   )

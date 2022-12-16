@@ -83,11 +83,9 @@ blank_5 -> pubs_2010_2020_ex
 rm(list = ls(pattern = "^label_"))
 
 
-# Export PDF
+# Export EPS
 flow_pubs %>%
   DiagrammeRsvg::export_svg() %>%
   charToRaw() %>%
-  rsvg::rsvg_pdf(here("figures", "flow-pubs.pdf")
-                 #width = 297.5,
-                 #height = 463
+  rsvg::rsvg_eps(here("figures", "flow-pubs.eps")
   )
