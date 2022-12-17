@@ -110,9 +110,9 @@ print(perc_closed)
 
 # syp responses for all pubs queried (unresolved, no best permission, no embargo info, response)
 
-data %>%
-  count(syp_response) %>%
-  mutate(perc = round(100*n/denom_all))
+# data %>%
+#   count(syp_response) %>%
+#   mutate(perc = round(100*n/denom_all))
 
 
 # syp responses for closed pubs (unresolved, no best permission, no embargo info, response)
@@ -172,20 +172,20 @@ data %>%
 
 # number of green OA articles for which an archiving permission was found
 
-denom_greenoa <- data %>%
-  filter(color == "green") %>%
-  nrow()
-
-data %>%
-  filter(
-    color == "green"
-  ) %>%
-  count(
-    is_archivable
-  ) %>%
-  mutate(
-    perc = round(100*n/denom_greenoa, 1)
-  )
+# denom_greenoa <- data %>%
+#   filter(color == "green") %>%
+#   nrow()
+# 
+# data %>%
+#   filter(
+#     color == "green"
+#   ) %>%
+#   count(
+#     is_archivable
+#   ) %>%
+#   mutate(
+#     perc = round(100*n/denom_greenoa, 1)
+#   )
 
 
 # realised potential of green oa
@@ -214,3 +214,15 @@ data %>% filter(
   count(
     embargo
   )
+
+# number of paywalled publications that have a permission to archive the
+# accepted version and an embargo of 12 months
+
+data %>% filter(
+  is_closed_archivable
+) %>%
+  filter(
+    embargo == 12,
+    permission_accepted
+  ) %>%
+  nrow()
