@@ -1,4 +1,4 @@
-# Descritive statistics
+# Descriptive statistics
 
 library(dplyr)
 library(readr)
@@ -123,8 +123,8 @@ denom_closed <- data %>%
 
 data %>%
   filter(color == "closed") %>%
-  count(syp_response) %>%
-  mutate(perc = round(100*n/denom_closed))
+  count(syp_response, is_archivable) %>%
+  mutate(perc = 100*n/denom_closed)
 
 
 # self-archiving permissions for closed publications with a syp response
@@ -132,14 +132,16 @@ data %>%
 denom_closed_response <- data %>%
   filter(
     color == "closed",
-    syp_response == "response"
+    syp_response == "response",
+    !is.na(is_closed_archivable)
   ) %>%
   nrow()
 
 data %>%
   filter(
     color == "closed",
-    syp_response == "response"
+    syp_response == "response",
+    !is.na(is_closed_archivable)
     ) %>%
   count(
     is_closed_archivable
@@ -219,10 +221,9 @@ data %>% filter(
 # accepted version and an embargo of 12 months
 
 data %>% filter(
-  is_closed_archivable
-) %>%
-  filter(
-    embargo == 12,
-    permission_accepted
-  ) %>%
-  nrow()
+  is_closed_archivable,
+  embargo == 12
+  ) %>% count(
+    permission_accepted,
+    permission_published
+  )
