@@ -35,32 +35,54 @@ archiving_plot <- archiving_plot %>%
   count(status, publication_year_unpaywall) %>%
   arrange(publication_year_unpaywall)
 
-archiving_plot$status <- factor(archiving_plot$status, levels = c("no_data",
-                                                    "permission_not_found",
-                                                    "permission_found",
-                                                    "archived"
-                                                    ))
-
-levels(archiving_plot$status) <- list("Permission unclear" = "no_data",
-                              "Permission not found" = "permission_not_found",
-                              "Permission found" = "permission_found",
-                              "Archived" = "archived"
-                              )
-
 archiving_plot$publication_year_unpaywall <- factor(archiving_plot$publication_year_unpaywall)
+
+
+# Change color palette depending on whether "permission not found" exists
+if (nrow(data %>% filter(!is_closed_archivable)) > 0) {
+
+  archiving_plot$status <- factor(archiving_plot$status, levels = c("no_data",
+                                                                    "permission_not_found",
+                                                                    "permission_found",
+                                                                    "archived"
+  ))
+  
+  levels(archiving_plot$status) <- list("Permission unclear" = "no_data",
+                                        "Permission not found" = "permission_not_found",
+                                        "Permission found" = "permission_found",
+                                        "Archived" = "archived"
+  )
+  
+  fill_colors <- c('#20303b', '#ab880c', '#539d66', '#00584e')
+  
+
+} else {
+  
+  archiving_plot$status <- factor(archiving_plot$status, levels = c("no_data",
+                                                                    "permission_found",
+                                                                    "archived"
+  ))
+  
+  levels(archiving_plot$status) <- list("Permission unclear" = "no_data",
+                                        "Permission found" = "permission_found",
+                                        "Archived" = "archived"
+  )
+  
+  fill_colors <- c('#20303b', '#539d66', '#00584e')
+}
 
 
 t <- ggplot(archiving_plot, aes(fill=status, y=n, x=publication_year_unpaywall)) + 
   geom_bar(position="stack", stat="identity", color="black") +
   scale_x_discrete(breaks = seq(from = 2010, to = 2020, by = 2)) +
-  scale_fill_manual(values=c('#20303b', '#ab880c', '#539d66', '#00584e'), name = NULL) +
+  scale_fill_manual(values = fill_colors, name = NULL) +
   xlab("Year of publication") +
   ylab("Paywalled publications") +
   ylim(0,160) +
   theme_classic() +
   theme(panel.grid.major.y = element_line(color = "black",
-                                    size = 0.3,
-                                    linetype = 3),
+                                          size = 0.3,
+                                          linetype = 3),
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 14, face = "bold"),
         axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0)),
