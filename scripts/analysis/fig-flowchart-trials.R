@@ -4,14 +4,14 @@ library(dplyr)
 library(glue)
 
 # Prepare labels
-label_iv_all <- glue('IntoValue trials\n(DRKS and CT.gov)\n(n = {n_trials_iv})\nIV1 = {n_trials_iv1} & IV2 = {n_trials_iv2}')
-label_iv_screened <- glue('Trials meeting IntoValue criteria\nwith new registry data\n(n = {n_trials_iv_interventional})')
-label_trials_lead <- glue('IntoValue German UMC Lead Trials\n(n = {n_trials_lead})')
+label_iv_all <- glue('IV trials\n(DRKS and CT.gov)\n(n = {n_trials_iv})\nIV1 = {n_trials_iv1} & IV2 = {n_trials_iv2}')
+label_iv_screened <- glue('Trials meeting IV criteria\nwith new registry data\n(n = {n_trials_iv_interventional})')
+label_trials_lead <- glue('Trials with German UMC Lead\n(n = {n_trials_lead})')
 label_trials_deduped <- glue('Trials with duplicates removed\n(n = {n_trials_deduped})')
 
-label_iv_screened_ex <- glue('Trials not meeting IntoValue criteria\nwith new registry data\n(n = {n_trials_iv_completion_date_ex + n_trials_iv_status_ex + n_trials_iv_interventional_ex})\nNot completed 2009-2017 (n = {n_trials_iv_completion_date_ex})\nNot included status (n = {n_trials_iv_status_ex})\nNot interventional (n = {n_trials_iv_interventional_ex})')
+label_iv_screened_ex <- glue('Trials not meeting IV criteria\nwith new registry data\n(n = {n_trials_iv_completion_date_ex + n_trials_iv_status_ex + n_trials_iv_interventional_ex})\nNot completed 2009-2017 (n = {n_trials_iv_completion_date_ex})\nNot included status (n = {n_trials_iv_status_ex})\nNot interventional (n = {n_trials_iv_interventional_ex})')
 label_iv_lead_ex <- glue('No German UMC Lead\n(n = {n_trials_lead_ex})')
-label_trials_dupes_ex <- glue('Duplicate trials\n(n = {n_trials_dupes_ex})')
+label_trials_dupes_ex <- glue('Duplicate trials\nfrom IV1 and IV2\n(n = {n_trials_dupes_ex})')
 
 # Prepare flowchart
 flow_trials <- DiagrammeR::grViz("digraph trials {
