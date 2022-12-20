@@ -49,7 +49,7 @@ if (nrow(data %>% filter(!is_closed_archivable)) > 0) {
   
   levels(archiving_plot$status) <- list("Permission unclear" = "no_data",
                                         "Permission not found" = "permission_not_found",
-                                        "Permission found" = "permission_found",
+                                        "Permitted to archive" = "permission_found",
                                         "Archived" = "archived"
   )
   
@@ -64,7 +64,7 @@ if (nrow(data %>% filter(!is_closed_archivable)) > 0) {
   ))
   
   levels(archiving_plot$status) <- list("Permission unclear" = "no_data",
-                                        "Permission found" = "permission_found",
+                                        "Permitted to archive" = "permission_found",
                                         "Archived" = "archived"
   )
   
@@ -77,7 +77,7 @@ t <- ggplot(archiving_plot, aes(fill=status, y=n, x=publication_year_unpaywall))
   scale_x_discrete(breaks = seq(from = 2010, to = 2020, by = 2)) +
   scale_fill_manual(values = fill_colors, name = NULL) +
   xlab("Year of publication") +
-  ylab("Paywalled publications") +
+  ylab("Closed-access publications") +
   ylim(0,160) +
   theme_classic() +
   theme(panel.grid.major.y = element_line(color = "black",
@@ -107,7 +107,7 @@ oa_plot <- oa_plot %>%
 
 oa_plot$color <- factor(oa_plot$color, levels = c("closed", "green", "bronze", "hybrid", "gold"))
 
-levels(oa_plot$color) <- list(Paywalled = "closed",
+levels(oa_plot$color) <- list(Closed = "closed",
                               Green = "green",
                               Bronze = "bronze",
                               Hybrid = "hybrid",
@@ -152,7 +152,7 @@ e <- ggplot(
   geom_bar(stat = "identity", fill = '#9fb6cd') +
   geom_text(aes(label = number), color = "black", size = 4.5, vjust = -0.5) +
   ylim(0,800) +
-  labs(y= "Paywalled publications", x = "Embargo length (months)") +
+  labs(y= "Closed-access publications", x = "Embargo length (months)") +
   theme_classic() +
   theme(panel.grid.major.y = element_line(color = "black",
                                           size = 0.1,
